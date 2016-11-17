@@ -1,0 +1,10 @@
+﻿DROP TABLE IF EXISTS `#@_bug_reply_table`;
+CREATE TABLE `#@_bug_reply_table` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `replytime` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `bug_id` int(11) NOT NULL DEFAULT '0',
+  `user_id` int(11) NOT NULL DEFAULT '0',
+  `username` char(32) NOT NULL DEFAULT '',
+  `description` text NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;

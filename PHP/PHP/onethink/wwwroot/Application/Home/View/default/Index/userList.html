@@ -1,0 +1,278 @@
+<html>
+<head>
+    <include file="Layouts/head"/>
+</head>
+<body>
+<block name="main">
+<div id="toolbar">
+    <a href="#"  class="easyui-linkbutton hidden" iconCls="icon-add" plain="true" onclick="$('#w').window('open'),event1()">新建</a>
+    <a href="#" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="javascript:$('#dg').edatagrid('destroyRow')">删除</a>
+    <a href="#" class="easyui-linkbutton" iconCls="icon-save" plain="true" onclick="editUser(),event2()">编辑</a>
+    <a href="#" class="easyui-linkbutton" iconCls="icon-undo" plain="true" onclick="javascript:$('#dg').edatagrid('reload')">重载数据</a>
+  <!--  <a href="#" class="easyui-linkbutton" iconCls="icon-search" plain="true" onclick="$('#dgll').window('open')">高级搜索</a>-->
+</div>
+
+<!-- tab 区域  -->
+<div   data-options="region:'center'"  title="员工管理" style="padding: 5px;width:1400px;">
+    <!--搜索部分 @搜索栏-->
+    <div id="tb" style="padding:3px">
+        <span>ID:</span>
+        <input id="itemid" class="easyui-textbox" >
+        <span>用户名:</span>
+        <input id="productid" class="easyui-textbox">
+        <span>更新时间:</span>
+        <input id="up_time" class="easyui-datebox " style="line-height:26px;border:1px solid #ccc">-
+        <input id="reup_time" class="easyui-datebox" style="line-height:26px;border:1px solid #ccc">
+        <a href="#" class="easyui-linkbutton" plain="true" onclick="doSearch()">提交</a>
+    </div>
+
+    <!-- tab 表格显示数据的部分 -->
+    <table id="dg"  class="easyui-datagrid" style="width:1400px;"
+
+           toolbar="#toolbar"  pagination="true"
+           rownumbers="true" fitColumns="true" singleSelect="true">
+        <thead>
+        <tr>
+            <th field="uid" width="50"  editor="{options:{required:true}}">关联ID</th>
+            <th field="nickname" width="50"  editor="{options:{required:true}}">用户名称</th>
+            <th field="score" width="50" editor="{options:{required:true}}">积分</th>
+            <th field="mobile" width="50" editor="">联系电话</th>
+            <th field="email" width="50" editor="">邮箱</th>
+            <th field="type" width="50" editor="">状态</th>
+            <th field="time" width="50" editor="{options:{required:true}}">更新时间</th>
+
+        </tr>
+        </thead>
+    </table>
+
+</div>
+
+<!--单击新建按钮触发的部分-->
+<div id="w" class="easyui-window " title="新增用户"  data-options="closed:true,modal:false,iconCls:'icon-save'" style="width:400px;height:400px;padding:5px;">
+    <div class="easyui-layout" data-options="fit:true">
+
+        <div data-options="region:'center'" style="padding:10px;">
+            <form id="ff"  method="post">
+                <table cellpadding="10" id="sv" title="新增用户"
+                       toolbar="#toolbar" pagination="true" idField="id"
+                       rownumbers="true" fitColumns="true" singleSelect="true" >
+                    <tr>
+                        <td>Name:</td>
+                        <td><input  type="text" name="username" placeholder="请输入6-16位用户名" data-options="required:true"></td>
+                    </tr>
+                    <tr>
+                        <td>password:</td>
+                        <td><input  type="password" placeholder="请输入密码" name="password" data-options="required:true'"></td>
+                    </tr>
+                    <tr>
+                        <td>repassword:</td>
+                        <td><input  type="password" placeholder="请输入密码" name="repassword" data-options="required:true"></td>
+                    </tr>
+                    <tr>
+                        <td>Email:</td>
+                        <td><input  type="text" placeholder="请输入正确的邮箱" name="email" data-options="required:true"></td>
+                    </tr>
+
+                </table>
+            </form>
+        </div>
+        <div data-options="region:'south',border:false" style="text-align:right;padding:5px 0 0;">
+            <a onclick="addUser()" class="easyui-linkbutton" data-options="iconCls:'icon-ok'"  plain="true"  style="width:80px">Ok</a>
+            <a class="easyui-linkbutton" data-options="iconCls:'icon-cancel'" href="javascript:void(0)" onclick="$('#w').window('close')" style="width:80px">Cancel</a>
+        </div>
+    </div>
+</div>
+
+<!--单击编辑按钮触发的部分 @editUser-->
+<div id="dgl" class="easyui-window " title="编辑员工"  data-options="closed:true,modal:false,iconCls:'icon-save'" style="width:400px;height:400px;padding:5px;">
+    <div class="easyui-layout" data-options="fit:true">
+
+        <div data-options="region:'center'" style="padding:10px;">
+            <form id="ff1"  method="post">
+                <table id="table" cellpadding="10"  title="编辑员工">
+
+                    <tr>
+                        <td >Name:</td>
+                        <td><input class="" type="text" name="nickname" data-options="required:true"></td>
+                    </tr>
+                    <tr>
+                        <td>Mobile:</td>
+                        <td><input  type="text" placeholder="请输入手机号" name="mobile" data-options="required:true'"></td>
+                    </tr>
+                    <tr>
+                        <input type="hidden" name="id">
+                        <td>QQ号码:</td>
+                        <td><input  type="text" placeholder="请输入QQ号码" name="qq" data-options="required:true"></td>
+                    </tr>
+                    <tr>
+                        <td>Email:</td>
+                        <td><input  type="text" placeholder="请输入正确的邮箱" name="email" data-options="required:true"></td>
+                    </tr>
+                    <tr>
+                        <td>Birthday:</td>
+                        <td><input  class="easyui-datebox" type="text" placeholder="请选择您的生日" name="birthday" data-options="required:true"></td>
+                    </tr>
+
+                </table>
+            </form>
+        </div>
+        <div data-options="region:'south',border:false" style="text-align:right;padding:5px 0 0;">
+            <a onclick="Update()" class="easyui-linkbutton" data-options="iconCls:'icon-ok'"  plain="true"  style="width:80px">Ok</a>
+            <a class="easyui-linkbutton" data-options="iconCls:'icon-cancel'" href="javascript:void(0)" onclick="$('#dgl').window('close')" style="width:80px">Cancel</a>
+        </div>
+    </div>
+</div>
+
+<!--单击高级按钮触发搜索部分-->
+<!--<div id="dgll" class="easyui-window " title="高级搜索"  data-options="closed:true,modal:false,iconCls:'icon-save'" style="width:800px;height:400px;padding:5px;">
+    <div class="easyui-layout" data-options="fit:true">
+        <div data-options="region:'center'" style="padding:10px;">
+            <form id="ff2"  method="post">
+
+            </form>
+        </div>
+        <div data-options="region:'south',border:false" style="text-align:right;padding:5px 0 0;">
+            <a onclick="souSuo()" class="easyui-linkbutton" data-options="iconCls:'icon-ok'"  plain="true"  style="width:80px">Ok</a>
+            <a class="easyui-linkbutton" data-options="iconCls:'icon-cancel'" href="javascript:void(0)" onclick="$('#dgll').window('close')" style="width:80px">Cancel</a>
+        </div>
+    </div>
+</div>-->
+</block>
+</body>
+
+<block name="script">
+    <script>
+
+        /*搜索 @搜索栏*/
+        function doSearch(){
+            var upTime=$('#up_time').datetimebox('getValue');
+            var reupTime=$('#reup_time').datetimebox('getValue');
+            if(reupTime < upTime){
+                alert('结束时间不能小于开始时间');
+                return false;
+            }
+            $('#dg').edatagrid('load',{
+                'uid': $('#itemid').val(),
+                'nickname': $('#productid').val(),
+                'uptime' : upTime,
+                'reuptime':reupTime
+            });
+        }
+        /*编辑用户信息 @editUser*/
+        function editUser(){
+            var row = $('#dg').datagrid('getSelected');
+            if (row){
+                $('#dgl').dialog('open').dialog('setTitle','Edit User');
+                $('#ff1').form('load',row);
+                url = 'index?id='+row.id;
+            }
+        }
+        /*保存@editUser的数据*/
+        function Update(){
+
+            $('#ff1').form('submit',{
+
+                url: "{:U('update')}",
+                onSubmit: function(){
+                    return $(this).form('validate');
+                },
+                success: function(result){
+
+                    var result = eval('('+result+')');
+                    if(result == 1){
+                        $('#dgl').dialog('close');
+                        alert('成功');
+                    }else{
+                        alert(result);
+                    }
+                    if (result.errorMsg){
+                        $.messager.show({
+                            title: 'Error',
+                            msg: result.errorMsg
+                        });
+
+                    } else {
+
+                        $('#dlg').dialog('close');		// close the dialog
+                        $('#dg').datagrid('reload');	// reload the user data
+                    }
+                },
+                error:function () {
+
+                }
+
+            });
+        }
+        /*新增*/
+        function addUser(){
+            $('#ff').form('submit',{
+                url: "{:U('user/register')}",
+                dataType:'json',
+                onSubmit: function(){
+                    return $(this).form('validate');
+                },
+                success: function(result){
+
+                    var result = eval('('+result+')');
+                    if(/(^[1-9][0-9]*)$/.test(result)){
+                        $('#ff').form('clear');
+                        alert('成功');
+                    }else{
+                        alert(result);
+                    }
+                    if (result.errorMsg){
+                        $.messager.show({
+                            title: 'Error',
+                            msg: result.errorMsg
+                        });
+                        //alert(msg);
+                    } else {
+                       // $('#w').dialog('close');		// close the dialog
+                       // $('#w').datagrid('reload');	// reload the user data
+                    }
+                }
+
+            });
+        }
+
+        function event1() {
+            document.onkeydown=function(event){
+                var e = event || window.event || arguments.callee.caller.arguments[0];
+
+                if(e && e.keyCode==27){ // 按 Esc
+                    //要做的事情
+                    $('#w').window('close')
+                }
+                if(e && e.keyCode==13){ // enter 键
+                   addUser();
+
+                }
+            };
+        }
+        function event2() {
+            document.onkeydown=function(event){
+                var e = event || window.event || arguments.callee.caller.arguments[0];
+
+                if(e && e.keyCode==27){ // 按 Esc
+                    //要做的事情
+                    $('#dgl').window('close')
+                }
+                if(e && e.keyCode==13){ // enter 键
+                    Update();
+
+                }
+            };
+        }
+
+        $(function() {
+            /*初始化tab的数据*/
+            $('#dg').edatagrid({
+                url: "{:U('user')}"
+            });
+
+
+        });
+
+    </script>
+</block>
+</html>

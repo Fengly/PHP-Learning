@@ -1,0 +1,96 @@
+<script language="javascript">
+if(!isset(que)){
+	var que = new Array();
+}
+var idd = '';
+function onSearch(idd){
+	$("#searchFormReport"+idd).form('submit',{
+		url:'__URL__/advsearch/act/1',
+		success:function(data){
+			$("#Report").datagrid('reload');
+			var sa = '{$TC.config.SEARCH_ADV_ACTION}';
+			if(sa==1){
+				$("#searchReport").dialog('close',true);
+			}
+		}
+	});
+}
+
+var acon = $("#dd{$uniqid}").html();
+
+//插行
+que['add_{$uniqid}'] = new actRow();
+que['add_{$uniqid}'].boxid = 'toadd{$uniqid}';
+que['add_{$uniqid}'].content = '<TR>'+acon+'</TR>';
+</script>
+<div class="con-tb">
+<form id="searchFormReport{$uniqid}" method="post">
+ <table class="infobox" width="100%" border="0" cellspacing="0" cellpadding="0" >
+  <tbody id="toadd{$uniqid}">
+  <tr>
+    <td width="3%" height="32" align="center"><img onclick="que['add_{$uniqid}'].a()" style="cursor:pointer" src="__ITEM__/__ADMIN.IMG__/add_tr.gif" class="addtr" title="插入行" /></td>
+    <td width="9%" align="center"><select name="field[]" data-options="editable:false">
+      <option  value="bugno">问题编号</option>
+      <option  value="t1_new_status">状态</option>
+      <option  value="t1_old_user_id">指派人</option>
+      <option  value="t1_new_type">出现位置</option>
+      <option  value="t1_new_level">严重性</option>
+      <option  value="t1_new_hertz">频率</option>
+      <option  value="t1_new_priority">优先级</option>
+      <option  value="title">摘要</option>
+      <option  value="creator">提交人</option>
+      <option  value="addtime">提交日期</option>
+    </select></td>
+    <td width="9%" align="center"><select  name="mod[]" data-options="editable:false">
+        <option  value="like">包含</option>
+        <option value="=">等于</option>  
+        <option  value=">">大于</option>
+        <option  value="<">小于</option>
+        <option  value=">=">大于等于</option>
+        <option  value="<=">小于等于</option> 
+        <option  value="<>">不等于</option>  
+        <option  value="not like">不包含</option>
+    </select></td>
+    <td width="70%" align="center"><input name="keys[]" id="keyword" class="easyui-validatebox" style="width:98%" data-options="" /></td>
+    <td width="9%" align="center"><select name="type[]" data-options="editable:false">
+      <option value="AND" selected="selected">并且</option>
+      <option  value="OR">或者</option>
+    </select></td>
+  </tr>
+  </tbody>
+  <tr id="dd{$uniqid}" style="display:none">
+    <td width="3%" height="32" align="center"><img onclick="que['add_{$uniqid}'].d()" style="cursor:pointer" src="__ITEM__/__ADMIN.IMG__/del_tr.gif" class="deltr" title="删除行" /></td>
+    <td width="9%" align="center"><select class="easyui-combobox" name="field[]" data-options="editable:false">
+      <option  value="bugno">问题编号</option>
+      <option  value="t1_new_status">状态</option>
+      <option  value="t1_old_user_id">指派人</option>
+      <option  value="t1_new_type">出现位置</option>
+      <option  value="t1_new_level">严重性</option>
+      <option  value="t1_new_hertz">频率</option>
+      <option  value="t1_new_priority">优先级</option>
+      <option  value="title">摘要</option>
+      <option  value="creator">提交人</option>
+      <option  value="addtime">提交日期</option>
+    </select></td>
+    <td width="9%" align="center"><select class="easyui-combobox" name="mod[]" data-options="editable:false">
+      <option  value="like">包含</option>
+        <option value="=">等于</option>  
+        <option  value=">">大于</option>
+        <option  value="<">小于</option>
+        <option  value=">=">大于等于</option>
+        <option  value="<=">小于等于</option> 
+        <option  value="<>">不等于</option>  
+        <option  value="not like">不包含</option>
+    </select></td>
+    <td width="70%" align="center"><input name="keys[]" id="keyword" class="easyui-validatebox" style="width:98%" data-options="" /></td>
+    <td width="9%" align="center"><select class="easyui-combobox" name="type[]" data-options="editable:false">
+      <option value="AND" selected="selected">并且</option>
+      <option  value="OR">或者</option>
+    </select></td>
+  </tr>
+  <tr>
+    <td height="35" colspan="5" align="center"><a href="#" onclick="javascript:onSearch('{$uniqid}')" id="su" class="easyui-linkbutton">立即查询</a></td>
+    </tr>
+ </table>
+</form>
+</div>

@@ -1,0 +1,12 @@
+﻿DROP TABLE IF EXISTS `#@_project_baseinfo_table`;
+CREATE TABLE `#@_project_baseinfo_table` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `pro_id` int(10) unsigned NOT NULL DEFAULT '0',
+  `app_handler` char(30) NOT NULL DEFAULT '',
+  `pro_creator` char(30) NOT NULL DEFAULT '',
+  `pro_creatdate` date NOT NULL DEFAULT '0000-00-00',
+  `pro_progress` varchar(250) NOT NULL,
+  `description` text NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `app_handler` (`app_handler`,`pro_creator`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='项目详情';

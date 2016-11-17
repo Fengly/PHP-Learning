@@ -1,0 +1,85 @@
+<script language="javascript">
+function onEditProject(idd){
+	var idd = $("#ids"+idd).val();
+	$("#editProject{$uniqid}").dialog({
+		title:'编辑项目',
+		resizable:true,
+		width:885,
+		height:430,
+		href:'__URL__/add/act/edit/id/'+idd,
+		onOpen:function(){
+			cancel['Project'] = $(this);
+		},
+		onClose:function(){
+			//$("#ProjectDetail").panel('refresh');
+			cancel['Project'] = null;
+		}
+	});
+}
+
+function onSendMail(idd){
+	var idd = $("#ids"+idd).val();
+	var len = $(".selectProjectDetail").length;
+	if(!len){
+		$("<div/>").dialog({
+			title:'进度提醒',
+			resizable:true,
+			width:610,
+			height:432,
+			href:'__APP__/Public/Mail/index/mode/3/pid/'+idd,
+			onOpen:function(){
+				cancel['ProjectDetail'] = $(this);
+			},
+			onClose:function(){
+				$(this).dialog('destroy');
+				cancel['ProjectDetail'] = null;
+			}
+		});
+	}
+}
+</script>
+<div class="table-border">
+    <table class="infobox" width="100%" border="0" cellspacing="0" cellpadding="0" style="border-style:hidden; border-style:none\9;">
+      <tbody>
+      <tr>
+        <td width="11%" class="rebg"><label for="name">项目名称</label><input id="ids{$uniqid}" type="hidden" value="{$id}" /></td>
+        <td width="23%">{$info.name}</td>
+        <td width="11%" class="rebg"><label for="status">状态</label></td>
+        <td width="22%">{$info.status_name}</td>
+        <td width="11%" class="rebg"><label for="view_state">查看权限</label></td>
+        <td width="22%">{$info.view_state_name}</td>
+      </tr>
+      <tr>
+        <td width="11%" class="rebg"><label for="client_id">所属客户</label></td>
+        <td width="23%">{$info.client_name}</td>
+        <td width="11%" class="rebg"><label for="app_handler">负责人</label></td>
+        <td width="22%">{$info.pro_info.app_handler}</td>
+        <td width="11%" class="rebg"><label for="itemtype">项目类型</label></td>
+        <td width="22%">{$info.itemtype_name}</td>
+      </tr>
+      <tr>
+        <td class="rebg"><label for="description">说明</label></td>
+        <td colspan="5">{$info.pro_info.description}</td>
+        </tr>
+      <tr>
+        <td class="rebg"><label for="pro_progress">进度</label></td>
+        <td colspan="3">{$info.pro_info.pro_progress}</td>
+        <td class="rebg"><label for="pro_creator">创建</label></td>
+        <td>{$info.pro_info.pro_creator}</td>
+      </tr>
+      <tr>
+        <td class="rebg"><label for="concern">项目关注人</label></td>
+        <td colspan="3">{$info.concern}</td>
+        <td class="rebg"><label for="pro_creatdate">创建日期</label></td>
+        <td>{$info.pro_info.pro_creatdate}</td>
+        </tr>
+      <tr>
+        <td height="34" colspan="6">
+         <a href="javascript:void(0);" onclick="javascript:onSendMail('{$uniqid}')" class="easyui-linkbutton ma-right" data-options="iconCls:'icon-email'">进度提醒</a>
+         <a href="javascript:void(0);" onclick="javascript:onEditProject('{$uniqid}')" class="easyui-linkbutton ma-right" data-options="iconCls:'icon-edit'">编辑</a>
+        </td>
+        </tr>
+      </tbody>
+    </table>  
+</div>
+<div id="editProject{$uniqid}"></div>

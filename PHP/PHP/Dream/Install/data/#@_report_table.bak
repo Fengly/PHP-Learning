@@ -1,0 +1,21 @@
+﻿DROP TABLE IF EXISTS `#@_report_table`;
+CREATE TABLE `#@_report_table` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `bugno` char(9) NOT NULL DEFAULT '',
+  `user_id` int(11) NOT NULL DEFAULT '0',
+  `creator` int(11) NOT NULL DEFAULT '0',
+  `pid` int(11) NOT NULL DEFAULT '0',
+  `type` smallint(4) NOT NULL DEFAULT '0',
+  `priority` smallint(4) NOT NULL DEFAULT '0',
+  `level` smallint(4) NOT NULL DEFAULT '0',
+  `hertz` smallint(4) NOT NULL DEFAULT '0',
+  `status` smallint(4) NOT NULL DEFAULT '0',
+  `os` char(50) NOT NULL DEFAULT '',
+  `title` varchar(80) NOT NULL DEFAULT '',
+  `addtime` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `uptime` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  PRIMARY KEY (`id`),
+  KEY `pid` (`pid`),
+  KEY `type` (`type`,`priority`,`status`),
+  KEY `title` (`title`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;

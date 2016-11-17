@@ -1,0 +1,28 @@
+<script language="javascript">
+var ch;
+$(function(){
+	ch = $("body").height();
+	var tt = tit;
+	$("#tabsProjectDetail{$uniqid}").tabs({
+		border:true,
+		onSelect:function(t,i){
+			tit = t;
+		}
+	});
+	$("#tabsProjectDetail{$uniqid}").tabs('select',tt);
+});
+</script>
+    <div id="tabsProjectDetail{$uniqid}"  class="easyui-tabs">  
+    
+   <?php
+    foreach($tabs as $tk=>$tv){
+   ?>
+    <div title="{$tv}" data-options="href:'__URL__/sonprogress/type/{$tk}/pid/{$id}'" style="min-height:26px; padding:3px">
+     
+     
+    </div>  
+    <?php
+     }
+    ?>
+    
+  </div>

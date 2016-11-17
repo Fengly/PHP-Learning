@@ -1,0 +1,232 @@
+<script language="javascript">
+if(!isset(que)){
+	var que = new Array();
+}
+
+var mc = Number('<?php echo C("MORE_COMY"); ?>');
+if(mc){
+	var mode = 3;
+}else{
+	var mode = 2;
+}
+
+que['businessAdd_{$uniqid}'] = new acrossClass();
+que['businessAdd_{$uniqid}'].act = '__APP__/Public/Mail';
+que['businessAdd_{$uniqid}'].show({
+	id:'{$uniqid}',
+	mail:0,
+	cls:'mail-height185',
+	mode:mode,
+	used:'{$constr}'
+});
+
+
+var acon = $("#addRow{$uniqid}").html();
+
+//插行
+que['add_{$uniqid}'] = new actRow();
+que['add_{$uniqid}'].boxid = 'addOpt{$uniqid}';
+que['add_{$uniqid}'].content = '<TR>'+acon+'</TR>';
+
+var act = '{$act}';
+$(function(){
+	$("#addFormBusiness{$uniqid}").form('load',{
+		'customer':'<?php echo $info["customer"] ?>',
+		'daily_date':'<?php echo $info["daily_date"] ?>',
+		'day_count':'<?php echo $info["day_count"] ?>',
+		'projects':'<?php echo $info["project"] ?>',
+		'project':'<?php echo $info["project"] ?>'
+	});
+	
+	isover = Number('<?php echo $info["status"] ?>');
+	if(isover>=2){
+		$("#overcheck{$uniqid}").attr("checked",true);
+		$("#overdaily{$uniqid}").show();
+	}
+	
+	$("#customer{$uniqid}").validatebox({
+		required:false,
+		validType:'ptext'
+	});	
+	$("#projects{$uniqid}").combobox({
+		url:'__URL__/getProject/act/json/val/name',
+		editable:true,
+		method:'get',
+		valueField:'id',
+		textField:'text',
+		required:true,
+		filter: function(q,r){
+			$("#project{$uniqid}").val(q);
+			var opts = $(this).combobox('options');
+			var v = r[opts.textField];
+			var vq = v.toUpperCase();
+			var vp = String(getPinYin(v));
+			var qp = q.toUpperCase();
+			if(vp.indexOf(qp)>=0 || vq.indexOf(qp) >= 0){
+				return r[opts.textField];
+			}
+		},
+		onSelect:function(c){
+			$("#project{$uniqid}").val(c['id']);
+		}
+	});
+	
+	if(act=='add'){
+		$("#daily_date{$uniqid}").datepicker('setValue','<?php echo date("Y-m-d",time()) ?>');
+	}
+	
+	$("#overcheck{$uniqid}").click(function(){
+		isck = $(this).attr("checked");
+		if(isck=="checked"){
+			$("#overdaily{$uniqid}").show();
+		}else{
+			$("#overdaily{$uniqid}").hide();
+		}
+	});
+});
+
+function onSubmitBusiness(idd){
+	$.messager.progress();
+	$("#toUser"+idd+" option").attr("selected",true);
+	$("#addFormBusiness"+idd).form('submit',{
+		url:'__URL__/add/act/add/go/1',
+		onSubmit: function(){
+			var isValid = $(this).form('validate');
+			if (!isValid){
+				$.messager.progress('close');
+			}
+			return isValid;
+		},
+		success:function(data){
+			$.messager.progress('close');
+			$("#toUser"+idd+" option").attr("selected",false);
+			if(data==1){
+				$.messager.alert('提示','新增数据成功！','info',function(){
+					var sa = '{$TC.config.SUBMIT_ACTION}';
+					$("#Business").datagrid('reload');
+					if(sa==1){
+						cancel['Business'].dialog('close');
+						cancel['Business'] = null;
+					}
+				});
+			}else if(data==0){
+				$.messager.alert('提示','新增数据失败！','warning');
+			}else{
+				alert(data);
+				$.messager.alert('提示','您没有新增权限！','warning',function(){
+					var sa = '{$TC.config.SUBMIT_ACTION}';
+					if(sa==1){
+						cancel['Business'].dialog('close');
+						cancel['Business'] = null;
+					}
+				});
+			}
+		}
+	});
+}
+
+function onUploadBusiness(idd){
+	$.messager.progress();
+	$("#toUser"+idd+" option").attr("selected",true);
+	var ids = $("#ids"+idd).val();
+	$("#addFormBusiness"+idd).form('submit',{
+		url:'__URL__/add/act/edit/go/1/id/'+ids,
+		onSubmit: function(){
+			var isValid = $(this).form('validate');
+			if (!isValid){
+				$.messager.progress('close');
+			}
+			return isValid;
+		},
+		success:function(data){
+			$.messager.progress('close');
+			$("#toUser"+idd+" option").attr("selected",false);
+			if(data==1){
+				$.messager.alert('提示','更新数据成功！','info',function(){
+					var sa = '{$TC.config.SUBMIT_ACTION}';
+					$("#Business").datagrid('reload');
+					if(sa==1){
+						cancel['Business'].dialog('close');
+						cancel['Business'] = null;
+					}
+				});
+				$("#add").dialog('refresh');
+			}else if(data==0){
+				$.messager.alert('提示','更新数据失败！','warning');
+			}else if(data==2){
+				$.messager.alert('提示','只能更新自己所新增的数据！','warning');
+			}else if(data==3){
+				$.messager.alert('提示','此单已审核，不能修改！','warning',function(){
+					var sa = '{$TC.config.SUBMIT_ACTION}';
+					if(sa==1){
+						cancel['Business'].dialog('close');
+						cancel['Business'] = null;
+					}
+				});
+			}else{
+				//alert(data);
+				$.messager.alert('提示','您没有更新权限','warning',function(){
+					var sa = '{$TC.config.SUBMIT_ACTION}';
+					if(sa==1){
+						cancel['Business'].dialog('close');
+						cancel['Business'] = null;
+					}
+				});
+			}
+		}
+	});
+}
+
+function onResetBusiness(idd){
+	cancel['Business'].dialog('close');
+	cancel['Business'] = null;
+}
+</script>
+
+<div class="con-tb">
+<form id="addFormBusiness{$uniqid}" method="post"> 
+<table class="infobox" width="100%" border="0" cellspacing="0" cellpadding="0" style="border-collapse: collapse;">
+  <tr>
+    <td><label for="user_id">出差人员</label></td>
+    <td colspan="4" style="padding:0px" id="{$uniqid}">&nbsp;</td>
+    </tr>
+  <tr>
+    <td width="12%"><label for="customer">目标客户</label><input id="ids{$uniqid}" type="hidden" value="{$id}" /></td>
+    <td width="32%"><input name="customer" id="customer{$uniqid}" type="text" size="34" autocomplete="off"/></td>
+    <td width="12%"><label for="daily_date">出差时间</label></td>
+    <td width="9%"><input name="daily_date" id="daily_date{$uniqid}" size="12" maxlength="19" class="easyui-datepicker" type="text" /></td>
+    <td width="35%"><span style="vertical-align:middle;">上午</span><input name="days" type="radio" value="9" checked="checked" style="vertical-align:middle;" /> <span style="vertical-align:middle;">下午</span><input name="days" type="radio" value="14" style="vertical-align:middle;" /></td>
+    </tr>
+  <tr>
+    <td><label for="projects">对应项目</label></td>
+    <td colspan="4"><input name="projects" id="projects{$uniqid}" size="60" class="relo" style="vertical-align:middle;" /><input name="project" id="project{$uniqid}"  type="hidden" value="" /><span class="up-font" style="vertical-align:middle;">（自定义时，请直接输入） </span></td>
+    </tr>
+  <tr>
+    <td height="186"><label for="purpose">出差目的</label></td>
+    <td colspan="4"><textarea name="purpose" id="purpose{$uniqid}"  rows="18" data-options="uploadJson:'__APP__/Public/Upload/save/act/Business'" class="easyui-kindeditor" style="width:99.8%; height:180px;">{$info.purpose}</textarea></td>
+    </tr>
+   
+  <tr>
+    <td><label for="yewu_handler">结束出差</label></td>
+    <td colspan="4"><input name="over" id="overcheck{$uniqid}" type="checkbox" value="1" /> <span class="up-font-over">（注意：如果出差未结束，请在结束后前往修改本日志，追加出差总结） </span></td>
+    </tr>
+    
+  <tbody id="overdaily{$uniqid}" style="display:none;">
+  <tr>
+    <td><label for="day_count">出差天数</label></td>
+    <td colspan="4" valign="middle"><input name="day_count" id="day_count{$uniqid}" class="easyui-numberspinner" data-options="precision:1,increment:0.5,value:0.0,min:0.5,required:true" type="text" size="10" style="vertical-align:middle;" /><span class="up-font" style="vertical-align:middle;">（半天用“0.5”表示） </span></td>
+    </tr>
+  <tr>
+    <td height="186"><label for="result">出差总结</label></td>
+    <td colspan="4"><textarea name="result" id="result{$uniqid}"  rows="18" class="easyui-kindeditor" style="width:99.8%; height:180px" data-options="uploadJson:'__APP__/Public/Upload/save/act/Business'">{$info.result}</textarea></td>
+    </tr> 
+  </tbody>
+  
+  <tr>
+    <td height="38" colspan="5" align="center"><if condition="$act=='add'">
+    <a href="javascript:void(0);" onclick="javascript:onSubmitBusiness('{$uniqid}')" id="su" class="easyui-linkbutton" data-options="iconCls:'icon-save'">保存</a><else /><a href="javascript:void(0);" onclick="javascript:return onUploadBusiness('{$uniqid}')" id="sue" class="easyui-linkbutton" data-options="iconCls:'icon-save'">保存</a></if> &nbsp; <a href="javascript:void(0);" onclick="javascript:onResetBusiness('{$uniqid}')" id="re" class="easyui-linkbutton" data-options="iconCls:'icon-cancel'">关闭</a></td>
+    </tr>
+ </table>
+</form>
+</div>
+<div id="addOpts"></div>

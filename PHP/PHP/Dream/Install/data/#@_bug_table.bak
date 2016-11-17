@@ -1,0 +1,12 @@
+﻿DROP TABLE IF EXISTS `#@_bug_table`;
+CREATE TABLE `#@_bug_table` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL DEFAULT '0',
+  `title` varchar(80) NOT NULL DEFAULT '',
+  `type` char(35) NOT NULL DEFAULT '1',
+  `project` char(60) NOT NULL DEFAULT '',
+  `os` char(35) NOT NULL DEFAULT '',
+  `addtime` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `files` varchar(100) NOT NULL DEFAULT '',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='问题列表';

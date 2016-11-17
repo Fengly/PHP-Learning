@@ -1,0 +1,16 @@
+[{
+  "id":1,
+  "text":"技术部",
+
+  "children":[
+    {
+      "text":"<span onclick='adminIndex()'>后台首页</span>"
+    },
+    {
+      "id": 2,
+      "text": "<span onclick='userList()'>员工列表</span>"
+    },{
+     "text":"<span onclick='userAddr()'>地址列表</span>"
+    }
+  ]
+}]

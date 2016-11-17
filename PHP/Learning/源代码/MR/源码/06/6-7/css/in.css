@@ -1,0 +1,9 @@
+@CHARSET "UTF-8";
+.one{
+	padding-left:10px;
+	font-family: "楷体_gb2312";
+}
+b{
+	color:red;
+	font-size: 20px;
+}

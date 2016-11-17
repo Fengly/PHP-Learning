@@ -1,0 +1,187 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+ <script type="text/javascript" src="__ITEM__/__UI__/jquery.js"></script>
+ <script type="text/javascript" src="__ITEM__/__JS__/jquery.cookie.js"></script>
+ <script language="javascript">
+  var isskin = window.parent.isskin?window.parent.isskin:'winner-aliyun';
+  document.write('<link id="easySty" rel="stylesheet" type="text/css" href="__ITEM__/__UI__/themes/'+isskin+'/easyui.css">');
+  document.write('<link type="text/css" rel="stylesheet" href="__ITEM__/__ADMIN.CSS__/index.css">');
+  document.write('<link id="adminSty" type="text/css" rel="stylesheet" href="__ITEM__/__ADMIN.CSS__/'+isskin+'/style.css">');
+ </script>
+ <link rel="stylesheet" type="text/css" href="__ITEM__/__UI__/themes/icon.css">
+ <link rel="stylesheet" href="__ITEM__/__JS__/kindeditor/themes/default/default.css" />
+ <link rel="stylesheet"  href="__ITEM__/__JS__/datepicker/skin/default/datepicker.css">  
+ 
+ <!-- Easyui -->
+ <script type="text/javascript" src="__ITEM__/__JS__/datepicker/WdatePicker.js"></script>
+ <script charset="utf-8" src="__ITEM__/__JS__/kindeditor/kindeditor-min.js"></script>
+ <script charset="utf-8" src="__ITEM__/__JS__/kindeditor/lang/zh_CN.js"></script>
+ <link href="__ITEM__/__JS__/kindeditor/plugins/code/shCoreDefault.css" rel="Stylesheet" type="text/css" />
+ <script src="__ITEM__/__JS__/kindeditor/plugins/code/shCore.js"></script>
+ 
+ <script type="text/javascript" src="__ITEM__/__UI__/jquery.easyui.min.js"></script>
+ <script type="text/javascript" src="__ITEM__/__UI__/locale/easyui-lang-zh_CN.js"></script> 
+ <script type="text/javascript" src="__ITEM__/__UI__/plugins/jquery.kindeditor.js"></script>
+ <script type="text/javascript" src="__ITEM__/__UI__/plugins/jquery.datepicker.js"></script>
+ 
+ <script type="text/javascript" src="__ITEM__/__JS__/objFunc.js"></script> 
+ <script type="text/javascript" src="__ITEM__/__JS__/objClass.js"></script>
+ <script type="text/javascript" src="__ITEM__/__JS__/acrossClass.js"></script> 
+ <script charset="utf-8" src="__ITEM__/__JS__/kindeditor/plugins/image/image.js"></script>
+<script language="javascript">
+   SyntaxHighlighter.all();
+</script>
+<script language="javascript">
+
+$(function(){
+	$("#re{$uniqid}").linkbutton({
+		iconCls:'icon-reset'
+	})
+	
+	$("#reply{$uniqid}").kindeditor({
+		uploadJson:'__APP__/Public/Upload/save/act/BugReply'
+	});
+});
+
+function onCloseBug(idd){
+	cancel['BugDetail'].dialog('close');
+	cancel['BugDetail'].dialog('destroy');
+	cancel['BugDetail'] = null;
+}
+
+
+function onReplyBug(idd){
+	var k = $("#reply{$uniqid}").kindeditor('editor');
+	isempty = k.isEmpty();
+	window.parent.addSonReply(idd,isempty);
+}
+
+function toRe(id){
+	var k = $("#reply{$uniqid}").kindeditor('editor');
+	k.html("@"+id+"：");
+	$("#replyBox").parent().scrollTop(99999);
+}
+
+function toReTop(){
+	$("#replyBox").parent().scrollTop(99999);
+}
+
+
+function toDel(id){
+	window.parent.delSonReply(id);
+}
+
+$(function(){
+	$.ajaxSetup({  
+		async : false  
+	});
+	
+	var browser_cache = Boolean(Number('{$TC.config.BROWSER_CACHE}'));
+	jQuery.ajaxSetup ({cache:browser_cache});
+	var isskin = $.cookie('easyui');
+	//alert(isskin);
+	if(isskin){
+		$("#adminSty").attr("href","__ITEM__/__ADMIN.CSS__/"+isskin+"/style.css");
+		$("#easySty").attr("href","__ITEM__/__UI__/themes/"+isskin+"/easyui.css");
+	}
+	$.ajaxSetup({  
+		async : true  
+	});
+});
+
+function onDown(id){
+	window.location = "__URL__/down/id/"+id;
+}
+</script>
+</head>
+<body>
+<div id="replyBox" class="con-tb">
+<form id="replyFormBug{$uniqid}" method="post" style="margin-bottom:0px;"> 
+<table class="infobox linebox" width="100%" border="0" cellspacing="0" cellpadding="0" style="font-size:13px;">
+  <tr>
+    <td width="12%" class="rebg"><label for="username">作者</label></td>
+    <td width="32%">{$info.username} <if condition="$uid!=$info['user_id']">[<a class="up-font" href="javascript:void(0);" onClick="toReTop()">评论</a>]</if></td>
+    <td width="12%" class="rebg"><label for="os">创建时间</label></td>
+    <td>{$info.addtime}</td>
+    </tr>
+  <tr>
+    <td class="rebg"><label for="title">问题描述</label></td>
+    <td colspan="3">{$info.title}</td>
+    </tr>
+  <tr>
+    <td width="12%" class="rebg"><label for="type">问题类型</label></td>
+    <td width="32%">{$info.type_name}</td>
+    <td width="12%" class="rebg"><label for="os">相关平台</label></td>
+    <td>{$info.os}</td>
+    </tr>
+  <tr>
+    <td class="rebg"><label for="project">对应项目</label></td>
+    <td colspan="3">{$info.project}</td>
+    </tr>
+  <tr>
+    <td class="rebg"><label for="content">详细现象</label></td>
+    <td colspan="3" valign="top"  >{$info.baseinfo.content}</td>
+    </tr>
+  <tr>
+    <td class="rebg"><label for="solution">解决方案</label></td>
+    <td colspan="3" valign="top"  >{$info.baseinfo.solution}</td>
+    </tr>
+  <tr>
+    <td class="rebg"><label for="files">附件</label></td>
+    <td colspan="3"  >
+     <if condition="$info['files']">
+      <a href="javascript:onDown({$info.id});" target="_blank" class="up-font-over"><img src="__ITEM__/__ADMIN.IMG__/files.png" /> 下载</a>
+     <else />
+      <font style="color:#999;"><img src="__ITEM__/__ADMIN.IMG__/files.png" /> 下载</font>
+     </if>
+    </td>
+    </tr>
+  <tr >
+    <td colspan="4" style="padding:5px;">
+     <if condition="$info['reply']">
+     <div style="">
+         <div class="detail-tit">评论</div> 
+         <div>
+         <table class="infobox table-border" width="100%" border="0" cellspacing="0" cellpadding="0">
+           <?php
+            foreach($info['reply'] as $k=>$s){
+             if($k%2==0){
+                $cls = 'class="rebg5"';
+             }else{
+                $cls = '';
+             }
+           ?>
+            <tr>
+                <td height="46" {$cls}>
+                 <div class="tpt"><span class="rpl">{$s.username} 于	 {$s.replytime} 发表的评论</span><span class="rpr"><if condition="$uid!=$s['user_id']">[<a href="javascript:void(0);" onClick="toRe('{$s.username}')">回复</a>]</if>&nbsp;&nbsp;<if condition="$uid==$s['user_id'] || $isadmin==1"><a href="javascript:onEdit('{$t.id}');"><!--[编辑]</a>&nbsp;&nbsp;--><a href="javascript:void(0);" onClick="toDel({$s.id})">[刪除]</a></if></span></div>
+                 <div class="tpc">{$s.description}</div>
+                </td>
+           </tr>
+          <?php
+           }
+          ?> 
+          </table>
+          <div class="pages">{$showpage}</div>
+       </div>
+     </div>
+	 <else />
+      <div style="">
+         <div class="detail-tit">暂无评论</div> 
+      </div>
+     </if>
+    </td>
+    </tr> 
+  <tr >
+    <td class="rebg"></td>
+    <td colspan="3" style="padding:10px" valign="middle">
+    <textarea name="description" id="reply{$uniqid}"  rows="18" style="width:99.8%; height:160px"></textarea>
+    <a style="margin-top:3px;" href="#" onClick="javascript:onReplyBug('{$uniqid}')" id="re{$uniqid}">发表评论</a> <input id="ids{$uniqid}" type="hidden" value="{$id}" />
+    </td>
+    </tr> 
+ </table>
+</form>
+</div>
+<div id="addOpts"></div>
+</body>
+</html>

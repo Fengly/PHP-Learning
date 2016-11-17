@@ -1,0 +1,55 @@
+<script language="javascript">
+function addSonReply(idd,isempty){
+	$.messager.progress();
+	if(!isempty){
+		var ids = $("#mb").contents().find("#ids"+idd).val();
+		$("#mb").contents().find("#replyFormBug"+idd).form('submit',{
+			url:'__URL__/reply/id/'+ids,
+			onSubmit: function(){
+				var isValid = $(this).form('validate');
+				if (!isValid){
+					$.messager.progress('close');
+				}
+				return isValid;
+			},
+			success:function(data){
+				$.messager.progress('close');
+				if(data==1){
+					$.messager.alert('提示','发表评论成功！','info',function(){
+						window.frames["mb"].location.reload();
+					});
+				}else if(data==0){
+					$.messager.alert('提示','发表评论失败！','warning');
+				}else{
+					//alert(data);
+					$.messager.alert('提示','您没有评论权限！','warning');
+				}
+			}
+		});
+	}else{
+		$.messager.progress('close');
+		$.messager.alert('提示','编辑框不能为空！','warning');
+		return false;
+	}
+}
+function delSonReply(id){
+	$.messager.confirm('提示','确定删除吗？',function(r){
+		if(r){
+			$.post("__URL__/delreply", {val:id} ,function(data){
+				if(data==1){
+					$.messager.alert('提示','删除评论成功！','info',function(){
+						window.frames["mb"].location.reload();
+					});
+				}else if(data==0){
+					$.messager.alert('提示','删除评论失败！','warning');
+				}else if(data==2){
+					$.messager.alert('提示','只能删除自己的评论！','warning');
+				}else{
+					$.messager.alert('提示','您没有删除权限！','warning');
+				}
+			});
+		}
+	});
+}
+</script>
+<iframe src='__URL__/replydetail/id/{$id}' name='mb' frameborder='0' id='mb' width='100%' height="100%"></iframe>

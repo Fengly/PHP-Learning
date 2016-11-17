@@ -1,0 +1,260 @@
+<script language="javascript">
+var role = '{$role}';
+if(role==-2){
+	cancel['Report'].dialog('close');
+	cancel['Report'] = null;
+	$.messager.alert('提示','您没有新增权限！','warning');
+}else if(role==-3){
+	cancel['Report'].dialog('close');
+	cancel['Report'] = null;
+	$.messager.alert('提示','您没有编辑权限！','warning');
+}
+
+var act = '{$act}';
+$(function(){
+	$("#addFormReport{$uniqid}").form('load',{
+		'type':'<?php echo $info["type"] ?>',
+		'pid':'<?php echo $info["pid"] ?>',
+		'level':'<?php echo $info["level"] ?>',
+		'hertz':'<?php echo $info["hertz"] ?>',
+		'priority':'<?php echo $info["priority"] ?>',
+		'comy':'<?php echo $info["comy"] ?>',
+		'user_id':'<?php echo $info["user_id"] ?>',
+		'title':'<?php echo $info["title"] ?>',
+		'comment':'<?php echo $info["baseinfo"]["comment"] ?>'
+	});
+	
+	var pid = '{$pid}';
+	$("#pid{$uniqid}").combobox({
+		url:'__GROUP__/Project/getProject/act/json',
+		editable:true,
+		method:'get',
+		valueField:'id',
+		textField:'text',
+		required:true,
+		disabled:true,
+		filter: function(q,r){
+			var opts = $(this).combobox('options');
+			var v = r[opts.textField];
+			var vp = String(getPinYin(v));
+			var qp = q.toUpperCase();
+			if(vp.indexOf(qp)>=0 || v.indexOf(q) >= 0){
+				return r[opts.textField];
+			}
+		},
+		onLoadSuccess:function(){
+			if(act=='add'){
+				$("#pid{$uniqid}").combobox('setValue',pid);
+			}
+		}
+	});
+	
+	$("#status{$uniqid}").combobox({
+		url:'__ITEM__/__RUNTIME__/Data/Json/Linkage/wentizhuangtai_data.json',
+		editable:false,
+		method:'get',
+		required:false,
+		valueField:'id',
+		textField:'text'
+	});
+	
+	$("#priority{$uniqid}").combobox({
+		url:'__ITEM__/__RUNTIME__/Data/Json/Linkage/youxianji_data.json',
+		editable:false,
+		method:'get',
+		required:true,
+		valueField:'id',
+		textField:'text'
+	});
+	
+	$("#hertz{$uniqid}").combobox({
+		url:'__ITEM__/__RUNTIME__/Data/Json/Linkage/chuxianpinlv_data.json',
+		editable:false,
+		method:'get',
+		required:true,
+		valueField:'id',
+		textField:'text'
+	});
+	
+	$("#type{$uniqid}").combobox({
+		url:'__ITEM__/__RUNTIME__/Data/Json/Linkage/chuxianweizhi_data.json',
+		editable:false,
+		method:'get',
+		required:true,
+		valueField:'id',
+		textField:'text'
+	});
+	
+	$("#level{$uniqid}").combobox({
+		url:'__ITEM__/__RUNTIME__/Data/Json/Linkage/yanzhongxing_data.json',
+		editable:false,
+		method:'get',
+		required:true,
+		valueField:'id',
+		textField:'text'
+	});
+	
+	$("#user_id{$uniqid}").combotree({
+		required:true,
+		url:'__ITEM__/__RUNTIME__/Data/Json/User_tree_data.json',
+		editable:true,
+		method:'get',
+		required:false,
+		valueField:'id',
+		textField:'text',
+		keyHandler: {
+			query : function(q) {
+				queryComboTree(q, "user_id{$uniqid}", 0);
+			}
+		},
+		onBeforeSelect:function(node){
+			if(isset(node.children)){
+				$("#user_id{$uniqid}").tree("unselect");
+			}
+		}
+	});
+});
+
+function onSubmitReport(idd){
+	$.messager.progress();
+	$("#addFormReport"+idd).form('submit',{
+		url:'__URL__/add/act/add/go/1',
+		onSubmit: function(){
+			var isValid = $(this).form('validate');
+			if (!isValid){
+				$.messager.progress('close');
+			}
+			return isValid;
+		},
+		success:function(data){
+			$.messager.progress('close');
+			if(data==1){
+				$.messager.alert('提示','新增数据成功！','info',function(){
+					var sa = '{$TC.config.SUBMIT_ACTION}';
+					$("#Report").datagrid('reload');
+					$("#BugDetail").panel('refresh');
+					if(sa==1){
+						cancel['Report'].dialog('close');
+						cancel['Report'] = null;
+					}
+				});
+			}else if(data==0){
+				$.messager.alert('提示','新增数据失败！','warning');
+			}else if(data<0){
+				$.messager.alert('提示','您没有新增权限！','warning',function(){
+					var sa = '{$TC.config.SUBMIT_ACTION}';
+					if(sa==1){
+						cancel['Report'].dialog('close');
+						cancel['Report'] = null;
+					}
+				});
+			}else{
+				$.messager.alert('提示',data,'warning');
+			}
+		}
+	});
+}
+
+function onUploadReport(idd){
+	$.messager.progress();
+	var ids = $("#ids"+idd).val();
+	$("#addFormReport"+idd).form('submit',{
+		url:'__URL__/add/act/edit/go/1/id/'+ids,
+		onSubmit: function(){
+			var isValid = $(this).form('validate');
+			if (!isValid){
+				$.messager.progress('close');
+			}
+			return isValid;
+		},
+		success:function(data){
+			$.messager.progress('close');
+			if(data==1){
+				$.messager.alert('提示','更新数据成功！','info',function(){
+					var sa = '{$TC.config.SUBMIT_ACTION}';
+					$("#Report").datagrid('reload');
+					$("#BugDetail").panel('refresh');
+					if(sa==1){
+						cancel['Report'].dialog('close');
+						cancel['Report'] = null;
+					}
+				});
+			}else if(data==0){
+				$.messager.alert('提示','更新数据失败！','warning');
+			}else if(data==2){
+				$.messager.alert('提示','只能更新自己所新增的数据！','warning');
+			}else if(data<0){
+				$.messager.alert('提示','您没有更新权限','warning',function(){
+					var sa = '{$TC.config.SUBMIT_ACTION}';
+					if(sa==1){
+						cancel['Report'].dialog('close');
+						cancel['Report'] = null;
+					}
+				});
+			}else{
+				$.messager.alert('提示',data,'warning');
+			}
+		}
+	});
+}
+
+function onResetReport(idd){
+	cancel['Report'].dialog('close');
+	cancel['Report'] = null;
+}
+</script>
+<div class="con-tb">
+<form method="post" enctype="multipart/form-data" id="addFormReport{$uniqid}">
+    <table class="infobox" width="100%" border="0" cellspacing="0" cellpadding="0" style="border-collapse: collapse;">
+      <tbody>
+      <tr>
+        <td width="11%"><label for="bugno">问题编号</label><input id="ids{$uniqid}" type="hidden" value="{$id}" /></td>
+        <td width="23%">{$bugno}<input name="bugno" type="hidden" value="{$bugno}" /></td>
+        <td width="11%"><label for="creator">创建人</label></td>
+        <td>{$username}</td>
+        <td><label for="level">严重性</label></td>
+        <td><input name="level" id="level{$uniqid}" class="relo" size="24" /></td>
+        </tr>
+      <tr>
+        <td width="11%"><label for="type">出现位置</label></td>
+        <td width="23%"><input name="type" id="type{$uniqid}" class="relo" size="24" /></td>
+        <td width="11%"><label for="hertz">频率</label></td>
+        <td width="22%"><input name="hertz" id="hertz{$uniqid}" class="relo" size="24" /></td>
+        <td width="11%"><label for="priority">优先级</label></td>
+        <td width="22%"><input name="priority" id="priority{$uniqid}" class="relo" size="24" /></td>
+      </tr>
+      <tr>
+        <td><label for="user_id">指派给</label></td>
+        <td><input name="user_id" id="user_id{$uniqid}" class="relo" size="24" /></td>
+        <td><label for="pid">所属项目</label></td>
+        <td colspan="3"><input name="pid" id="pid{$uniqid}" class="relo" size="45" /></td>
+        </tr>
+      <tr>
+        <td><label for="title">摘要</label></td>
+        <td colspan="5"><input name="title" type="text" id="title{$uniqid}" class="easyui-validatebox" data-options="validType:'ptext'" style="width:99.8%" autocomplete="off" /></td>
+        </tr>
+      <tr>
+        <td><label for="notes">详细现象</label></td>
+        <td height="225" colspan="5"><textarea name="notes" id="notes{$uniqid}"  rows="18" data-options="uploadJson:'__APP__/Public/Upload/save/act/Report'" class="easyui-kindeditor" style="width:99.8%; height:220px;">{$info.baseinfo.notes}</textarea></td>
+      </tr>
+      <tr>
+        <td><label for="comment">备注</label></td>
+        <td colspan="5"><input name="comment" type="text" id="comment{$uniqid}" class="easyui-validatebox" data-options="validType:'ptext'" style="width:99.8%" autocomplete="off" /></td>
+        </tr>
+      <if condition="$act=='add'">
+      <tr>
+        <td><label for="path">附件</label></td>
+        <td colspan="5">
+         <input name="path" type="file" />&nbsp;<span class="up-font-over">(文件类型：<?php echo C('UPLOAD_TYPE') ?>)</span>
+        </td>
+      </tr> 
+     </if>
+      </tbody>
+      <tr>
+        <td height="38" colspan="6" align="center"><if condition="$act=='add'">
+        <a href="javascript:void(0);" onclick="javascript:onSubmitReport('{$uniqid}')" id="su" class="easyui-linkbutton" data-options="iconCls:'icon-save'">保存</a><else /><a href="javascript:void(0);" onclick="javascript:return onUploadReport('{$uniqid}')" id="sue" class="easyui-linkbutton" data-options="iconCls:'icon-save'">保存</a></if> &nbsp; <a href="javascript:void(0);" onclick="javascript:onResetReport('{$uniqid}')" id="re" class="easyui-linkbutton" data-options="iconCls:'icon-cancel'">关闭</a></td>
+        </tr>
+     </table> 
+</form>
+</div>
+<div id="addApp"></div>

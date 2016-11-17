@@ -1,0 +1,18 @@
+﻿DROP TABLE IF EXISTS `#@_trip_daily`;
+CREATE TABLE `#@_trip_daily` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` varchar(30) NOT NULL DEFAULT '',
+  `creator` int(11) NOT NULL DEFAULT '0',
+  `status` tinyint(2) NOT NULL DEFAULT '0',
+  `customer` varchar(32) NOT NULL,
+  `daily_date` datetime NOT NULL,
+  `project` varchar(64) NOT NULL DEFAULT '',
+  `purpose` text NOT NULL,
+  `day_count` decimal(5,1) unsigned NOT NULL DEFAULT '0.0',
+  `result` text NOT NULL,
+  `checker` int(11) unsigned DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `status` (`status`),
+  KEY `uid` (`user_id`),
+  KEY `dd` (`daily_date`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='出差日志';

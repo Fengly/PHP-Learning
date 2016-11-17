@@ -1,0 +1,397 @@
+<script type="text/javascript" src="__JS__/chart/js/swfobject.js"></script>
+<script language="javascript">
+swfobject.embedSWF(
+"__JS__/chart/open-flash-chart.swf", "buglevel_chart",
+"600", "300", "9.0.0", "expressInstall.swf",
+{"data-file":"__URL__/buglevel/id/<?php echo $id; ?>"},{wmode: "opaque"} );
+
+$(function(){
+	$("#ProjectProgress").panel({
+		//title:'跟进信息',
+		border:false,
+		collapsible:true,
+		collapsed:false,
+		//width:cw-17,
+		href:'__URL__/detail_progress/id/{$id}',
+		style:{'margin-top':'4px'}
+	});
+	
+	var cw = $("#ProjectDetailCon").width();
+	var pr = '<?php echo $page_row ?>';
+	var pn = false;
+	var ch = $("body").height();
+	if(pr>0){
+		pn = true;
+	}
+	
+	$("#Report").datagrid({
+		//title:'BUG列表',
+		autoRowHeight:false,
+		singleSelect:true,
+		striped:true,
+		rownumbers:true,
+		pagination:pn,
+		showFooter:true,
+		prototype:true,
+		sortName:'t1_new_priority',
+		sortOrder:'desc',
+		pageSize:10,
+		pageList:[10,30,50,80,100,1000],
+		method:'get',
+		url:'__GROUP__/Report/index/json/1/pid/{$id}',
+		fitColumns:Number('{$TC.config.DG_FIT_COLUMNS}'),
+		nowrap:Number('{$TC.config.DATA_NOWRAP}'),
+		selectOnCheck:false,
+		checkOnSelect:true,
+		onBeforeLoad: function(){  
+			 if($("#ReportDetail .datagrid-toolbar table tr #sersSearchReportStatus").length==0){
+				 var grid = $("#ReportDetail .datagrid-toolbar table tr");  
+				 var ldata = '<td>'+$("#selectInputReport").html()+'</td>'; 
+				 grid.append(ldata);
+				 
+				 $("#sersSearchReportStatus").change(function(){
+					var idd = $(this).val();
+					$.post('__GROUP__/Report/change/act/status', {val:idd}, function(data){
+						$("#Report").datagrid('reload');
+					});
+				});
+				
+				$('#ReportSearch').searchbox({   
+					searcher:function(value,name){
+						$.post('__GROUP__/Report/change/act/'+name+'/mode/like', {val:value}, function(data){
+							$("#Report").datagrid('reload');
+						});
+					},   
+					menu:'#ReportSearchSon',   
+					prompt:'请输入关键字'  
+				 });
+			 }
+		},
+		onDblClickRow:function(e,rowIndex,rowData){
+			//var se = $(this).datagrid('getSelected');
+			var se = $("#Report").datagrid('getChecked');
+			var se_len = se.length;
+			var idd = se[0]['id'];
+			if(se_len==1){
+				$("<div/>").dialog({
+					title:'BUG详情',
+					resizable:true,
+					width:960,
+					height:ch-80,
+					href:'__GROUP__/Report/detail/id/'+idd,
+					onOpen:function(){
+						cancel['ReportDetail'] = $(this);
+					},
+					onClose:function(){
+						//$("#Bug").datagrid('reload');
+						$(this).dialog('destroy');
+						cancel['ReportDetail'] = null;
+					}
+				});
+			}
+		},
+		onUncheck:function(i,d){
+			$("#Report").datagrid('unselectRow',i);
+		},
+		toolbar:[{
+		iconCls: 'icon-add',
+			text : '新增',
+			handler: function(){
+				$("#addReport").dialog({
+					title:'新增BUG',
+					resizable:true,
+					width:920,
+					height:455,
+					href:'__GROUP__/Report/add/act/add/pid/{$id}',
+					onOpen:function(){
+						cancel['Report'] = $(this);
+					},
+					onClose:function(){
+						cancel['Report'] = null;
+					}
+				});
+			}
+		},'-',{
+			iconCls: 'icon-edit',
+			text : '编辑',
+			handler: function(){
+				var se = $("#Report").datagrid('getChecked');
+				var se_len = se.length;
+				var idd = se[0]['id'];
+				if(se_len==1){
+					$("#addReport").dialog({
+						title:'编辑BUG',
+						resizable:true,
+						width:920,
+						height:427,
+						href:'__GROUP__/Report/add/act/edit/pid/{$id}/id/'+idd,
+						onOpen:function(){
+							cancel['Report'] = $(this);
+						},
+						onClose:function(){
+							//$(this).dialog('destroy');
+							//$("#Report").datagrid('reload');
+							cancel['Report'] = null;
+						}
+					});
+				}else if(se_len>1){
+					$.messager.alert('提示','不能同时编辑两行数据！','warning');
+				}
+			}
+		},'-',{
+			iconCls: 'icon-cancel',
+			text : '删除',
+			handler: function(){
+				var se = $("#Report").datagrid('getChecked');
+				var s = "";  
+				for (var property in se) {  
+					s = s + se[property]['id']+',' ;  
+				}
+				if(s){
+					$.messager.confirm('提示','确定删除吗！',function(r){
+						if(r==true){
+							$.messager.progress();
+							$.post('__GROUP__/Report/del',{id:s}, function(data){
+								$.messager.progress('close');
+								if(data==1){
+									$.messager.alert('提示','删除数据成功！','info',function(){
+										$("#Report").datagrid('reload');
+										$("#BugDetail").panel('refresh');
+									});
+								}else if(data==0){
+									$.messager.alert('提示','删除数据失败！','warning');
+								}else if(data==2){
+									$.messager.alert('提示','只能删除自己所新增的数据！','warning');
+								}else{
+									$.messager.alert('提示','您没有删除权限','warning');
+								}
+							});
+						}
+					});
+				}
+			}
+		},'-',{
+			iconCls: 'icon-email',
+			text : '邮件提醒',
+			handler: function(){
+				var len = $(".selectReportMail").length;
+				var se = $("#Report").datagrid('getChecked');
+				var se_len = se.length;
+				var idd = se[0]['id'];
+				if(se_len==1){
+					if(!len){
+						$("<div/>").dialog({
+							title:'邮件提醒',
+							resizable:true,
+							width:610,
+							height:432,
+							href:'__APP__/Public/Mail/index/mode/4/pid/{$id}/id/'+idd,
+							onOpen:function(){
+								cancel['ReportMail'] = $(this);
+							},
+							onClose:function(){
+								$(this).dialog('destroy');
+								cancel['ReportMail'] = null;
+							}
+						});
+					}
+				}else if(se_len>1){
+					$.messager.alert('提示','不能同时选择两行数据！','warning');
+				}
+			}
+		},'-',{
+			iconCls: 'icon-search',
+			text : '高级搜索',
+			handler: function(){
+				$("#searchReport").dialog({
+					title:'高级搜索',
+					resizable:true,
+					width:500,
+					height:220,
+					href:'__GROUP__/Report/advsearch'
+				});
+			}
+		},'-',{
+			iconCls: 'icon-reload',
+			text : '重载',
+			handler: function(){
+				$.get('__GROUP__/Report/clear', function(data){
+					$("#sersSearchReportStatus").val(0);
+					$("#ReportSearch").searchbox('setValue','');
+					$("#Report").datagrid('reload');
+				});
+			}
+		}],
+		frozenColumns:[[
+			{checkbox:true},
+			{field:'bugno',title:'问题编号',width:83,sortable:true}
+		]],
+		columns:[[  
+			{field:'title',title:'摘要',width:320},
+			{field:'t1_old_user_id',title:'指派给',width:55,sortable:true},
+			{field:'t1_new_type',title:'出现位置',width:100,sortable:true},
+			{field:'t1_new_level',title:'严重性',width:55,sortable:true},
+			{field:'t1_new_hertz',title:'频率',width:60,sortable:true},
+			{field:'t1_new_priority',title:'优先级',width:55,sortable:true},
+			{field:'t1_new_status',title:'状态',width:65,sortable:true},
+			{field:'creatorname',title:'提交人',width:55,sortable:true},
+			{field:'addtime',title:'提交日期',width:145,sortable:true}
+		]]
+	});
+	
+	$("#Log").datagrid({	
+		autoRowHeight:true,
+		singleSelect:true,
+		striped:true,
+		rownumbers:true,
+		pagination:true,
+		pageSize:10,
+		pageList:[10,30,50,80,100,1000],
+		method:'get',
+		sortName:'addtime',
+		sortOrder:'desc',
+		url:'__GROUP__/Log/index/pid/{$id}/json/1',
+		fitColumns:true,
+		nowrap:Number('{$TC.config.DATA_NOWRAP}'),
+		selectOnCheck:false,
+		checkOnSelect:true,
+		onBeforeLoad: function(){  
+			 if($("#LogDetail .datagrid-toolbar table tr #LogSearch").length==0){
+				 var grid = $("#LogDetail .datagrid-toolbar table tr");  
+				 var ldata = '<td>'+$("#selectInputLog").html()+'</td>'; 
+				 grid.append(ldata);
+				 
+				
+				$("#seleLogAddtimeST").datebox({
+					 onSelect:function(date){ 
+						var gen = $("#seleLogAddtimeEN").datebox('getValue');
+						var en = gen?gen:'{$nowdate}';
+						sdate = date.getFullYear()+"-"+pad((date.getMonth()+1),2)+"-"+pad(date.getDate(),2);
+						var idd = sdate+'|'+en;
+						$.post('__GROUP__/Log/change/act/addtime', {val:idd}, function(data){
+							$("#Log").datagrid('reload');
+						});
+					 }
+					 
+				 });
+				 
+				 $("#seleLogAddtimeEN").datebox({
+					 onSelect:function(date){
+						var gst = $("#seleLogAddtimeST").datebox('getValue');
+						var st = gst?gst:'{$nowyear}';
+						edate = date.getFullYear()+"-"+pad((date.getMonth()+1),2)+"-"+pad(date.getDate(),2);
+						var idd = st+'|'+edate;
+						$.get('__GROUP__/Log/change/act/addtime', {val:idd}, function(data){
+							$("#Log").datagrid('reload');
+						});
+					 }
+				 });
+				 
+				  $('#LogSearch').searchbox({   
+					searcher:function(value,name){
+						$.post('__GROUP__/Log/change/act/'+name+'/mode/like', {val:value}, function(data){
+							$("#Log").datagrid('reload');
+						});
+					},   
+					menu:'#LogSearchSon',   
+					prompt:'请输入关键字'  
+				 }); 
+			 }
+		},
+		onDblClickRow:function(e,rowIndex,rowData){
+			var se = $(this).datagrid('getSelected');
+			var idd = se['id'];
+			getDetailLog(idd);
+		},
+		toolbar:[{
+			iconCls: 'icon-reload',
+			text : '重载',
+			handler: function(){
+				$.get('__GROUP__/Log/clear', function(data){
+					$("#seleLogAddtimeST").datebox('setValue','');
+					$("#seleLogAddtimeEN").datebox('setValue','');
+					$("#LogSearch").searchbox('setValue','');
+					$("#Log").datagrid('reload');
+				});
+			}
+		}],
+		columns:[[   
+			{field:'description',title:'日志描述',width:680},
+			{field:'addtime',title:'操作时间',width:160}
+		]]
+	});
+});
+</script>
+<div style="margin-top:10px; width:50%; float:left;">
+         <div class="detail-tit">BUG严重性分布</div> 
+         <div class="detail-con" id="buglevel_chart">
+          
+         </div>
+     </div>
+    
+     <div style="margin-top:10px; width:45%; float:right;"">
+         <div class="detail-tit">BUG状态统计</div> 
+         <div class="detail-con" style="padding-top:8px;">
+          <div class="total-box">
+           <span class="tit">总数量：</span><span class="num"><?php echo $app->getTotal('report_table','`pid`='.$id); ?></span>
+          </div>
+          <div class="total-box">
+           <span class="tit">未指派：</span><span class="num"><?php echo $app->getTotal('report_table','`pid`='.$id.' and `user_id`=0 and `status`=0'); ?></span>
+          </div>
+          <div class="total-box">
+           <span class="tit">待解决：</span><span class="num"><?php echo $app->getTotal('report_table','`pid`='.$id.' and `user_id`>0 and `status`=0'); ?></span>
+          </div>
+          <foreach name="status" item="t">
+          <div class="total-box">
+           <span class="tit">{$t.text}：</span><span class="num"><?php echo $app->getTotal('report_table','`pid`='.$id.' and `status`='.$t['id']); ?></span>
+          </div>
+          </foreach>
+         </div>
+     </div>
+     
+     <div style="clear:both; margin-bottom:20px;"></div>
+    
+    <div id="reprotTabs" class="easyui-tabs">
+     <div title="BUG列表"> 
+      <div id="ReportDetail" style="padding:3px; -moz-user-select:none;" onselectstart="return false;">
+        <table id="Report"></table>
+      </div>
+     </div>
+     <div title="操作日志"> 
+      <div id="LogDetail" style="padding:3px; -moz-user-select:none;" onselectstart="return false;">
+        <table id="Log"></table>
+      </div>
+     </div>
+    </div>
+    <div id="ProjectProgress"></div>  
+</div>
+<div id="editProject{$uniqid}"></div>
+<div id="searchReport"></div>
+<div id="addReport"></div>
+<div id="selectInputReport" style="display:none">
+ <span class="datagrid-btn-separator-nofloat" style="margin-right:1px"></span>
+ <input id="ReportSearch" AUTOCOMPLETE="off" style="width:280px;"></input>  
+ <div id="ReportSearchSon" style="width:120px">
+    <div data-options="name:'title'">问题摘要</div>
+	<div data-options="name:'bugno'">问题编号</div>  
+ </div> 
+ <span class="datagrid-btn-separator-nofloat" style="margin-right:1px"></span>
+ <select id="sersSearchReportStatus" >
+  <option value="0">所有状态</option> 
+  <foreach name="tinfo" item="t">
+   <option value="<?php echo $t['id'] ?>"><?php echo $t['text'] ?></option>
+  </foreach>
+ </select>
+</div>
+
+<div id="selectInputLog" style="display:none">
+ <span class="datagrid-btn-separator-nofloat"  style="margin-right:1px;"></span>
+ <input id="LogSearch" AUTOCOMPLETE="off" style="width:280px;"></input>  
+ <div id="LogSearchSon" style="width:120px">  
+    <div data-options="name:'description'">日志描述</div>
+ </div> 
+ <span class="datagrid-btn-separator-nofloat"  style="margin-right:1px;"></span>
+  <input  id="seleLogAddtimeST" name="addtime[]" size="10" type="text"></input>
+  &nbsp;至&nbsp;
+  <input  id="seleLogAddtimeEN" name="addtime[]" size="10" type="text"></input>
+</div>

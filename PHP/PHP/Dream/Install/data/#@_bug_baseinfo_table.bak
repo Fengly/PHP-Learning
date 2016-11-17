@@ -1,0 +1,9 @@
+﻿DROP TABLE IF EXISTS `#@_bug_baseinfo_table`;
+CREATE TABLE `#@_bug_baseinfo_table` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `bug_id` int(11) NOT NULL DEFAULT '0',
+  `content` text NOT NULL,
+  `solution` text NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `bug_id` (`bug_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;

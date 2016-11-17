@@ -1,0 +1,79 @@
+<script type="text/javascript">
+if(!isset(que)){
+	var que = new Array();
+}
+var mc = Number('<?php echo C("MORE_COMY"); ?>');
+if(mc){
+	var mode = 3;
+}else{
+	var mode = 2;
+}
+que['progress_{$uniqid}'] = new acrossClass();
+que['progress_{$uniqid}'].act = '__APP__/Public/Mail';
+que['progress_{$uniqid}'].show({
+	id:'{$uniqid}',
+	mail:1,
+	cls:'mail-height325',
+	mode:mode,
+	used:'{$constr}'
+});
+
+
+
+var ids='';
+function onSendDe(ids){
+	var tu = $("#toUser"+ids+" option").length;
+	if(tu>0){
+		$.messager.progress();
+		$("#toUser"+ids+" option").attr("selected",true);
+		var id = $("#idd").val();
+		var pid = $("#pidd").val();
+		$("#selectMail"+ids).form('submit',{
+			url:'__URL__/sendProgress/id/'+id+'/mode/'+pid,
+			success:function(data){
+				$.messager.progress('close');
+				$("#toUser"+ids+" option").attr("selected",false);
+				if(data==1){
+					$.messager.alert('提示','邮件发送成功！','info');
+				}else if(data==0){
+					$.messager.alert('提示','邮件发送失败！','warning');
+				}else{
+					var mp = '{$mailpwd}';
+					if(!mp){
+						$.messager.prompt('提示','请输入您的邮箱密码：',function(r){
+							if(isset(r) && r){
+								var uid = Number('{$userid}');
+								$.post('__APP__?g=<?php echo GROUP_NAME; ?>&m=User&a=setmail', {mailpwd:r,id:uid},function(data){
+									if(data==1){
+										$.messager.alert('提示','密码设置成功，请重新点击发送！','info');
+									}else if(data==0){
+										$.messager.alert('提示','密码设置失败，请重新设置密码！','warning');
+									}
+								});
+							}
+						});
+					}else{
+						$.messager.alert('提示',data,'warning');
+					}	
+				}
+			}
+		});
+	}
+}
+function onResetMail(idd){
+	cancel['ProjectDetail'].dialog('close');
+	cancel['ProjectDetail'] = null;
+}
+</script>
+<div class="con-tb">
+<form class="selectProjectDetail" id="selectMail{$uniqid}" method="post" enctype="multipart/form-data">
+  <table class="infobox" width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td colspan="5" id="{$uniqid}" style="padding:0px">&nbsp;</td>
+      </tr>
+      <tr>
+        <td height="38" colspan="5" align="center"><input type="hidden" id="idd" name="idd" value="{$id}" /><input type="hidden" id="pidd" name="pidd" value="{$pid}" /> <a href="javascript:void(0);" onclick="javascript:return onSendDe('{$uniqid}')" id="sue2" class="easyui-linkbutton" data-options="iconCls:'icon-save'">发送</a> &nbsp; <a href="javascript:void(0);" onclick="javascript:onResetMail('{$uniqid}')" id="re" class="easyui-linkbutton" data-options="iconCls:'icon-cancel'">关闭</a></td>
+      </tr>
+  </table>
+</form>
+</div>

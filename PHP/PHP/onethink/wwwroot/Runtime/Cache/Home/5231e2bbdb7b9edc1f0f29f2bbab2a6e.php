@@ -1,0 +1,46 @@
+<?php if (!defined('THINK_PATH')) exit();?><!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Basic Form - jQuery EasyUI Demo</title>
+    <link rel="stylesheet" type="text/css" href="/onethink/wwwroot/Public/EasyUI/themes/default/easyui.css">
+    <link rel="stylesheet" type="text/css" href="/onethink/wwwroot/Public/EasyUI/themes/icon.css">
+    <link rel="stylesheet" type="text/css" href="/onethink/wwwroot/Public/EasyUI/demo/demo.css">
+    <script type="text/javascript" src="/onethink/wwwroot/Public/EasyUI/jquery.min.js"></script>
+    <script type="text/javascript" src="/onethink/wwwroot/Public/EasyUI/jquery.easyui.min.js"></script>
+</head>
+<body>
+<div id="dd" class="easyui-dialog" style="padding:5px;width:400px;height:200px;"
+     title="My Dialog" iconCls="icon-ok"
+     toolbar="#dlg-toolbar" buttons="#dlg-buttons">
+    Dialog Content.
+</div>
+<div id="dlg-toolbar">
+    <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="javascript:alert('Add')">Add</a>
+    <a href="#" class="easyui-linkbutton" iconCls="icon-save" plain="true" onclick="javascript:alert('Save')">Save</a>
+</div>
+<div id="dlg-buttons">
+    <a href="#" class="easyui-linkbutton" iconCls="icon-ok" onclick="javascript:alert('Ok')">Ok</a>
+    <a href="#" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#dd').dialog('close')">Cancel</a>
+</div>
+<input id="cg" style="width:150px">
+</body>
+<script>
+    $('#cg').combogrid({
+        panelWidth:500,
+        url: 'form5_getdata.php',
+        idField:'itemid',
+        textField:'productid',
+        mode:'remote',
+        fitColumns:true,
+        columns:[[
+            {field:'itemid',title:'Item ID',width:60},
+            {field:'productid',title:'Product ID',align:'right',width:80},
+            {field:'listprice',title:'List Price',align:'right',width:60},
+            {field:'unitcost',title:'Unit Cost',align:'right',width:60},
+            {field:'attr1',title:'Attribute',width:150},
+            {field:'status',title:'Stauts',align:'center',width:60}
+        ]]
+    });
+</script>
+</html>

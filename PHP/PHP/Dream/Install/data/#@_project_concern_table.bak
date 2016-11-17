@@ -1,0 +1,7 @@
+﻿DROP TABLE IF EXISTS `#@_project_concern_table`;
+CREATE TABLE `#@_project_concern_table` (
+  `id` smallint(4) unsigned NOT NULL AUTO_INCREMENT,
+  `pro_id` int(10) unsigned NOT NULL DEFAULT '0',
+  `user_id` int(10) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED COMMENT='项目关注';

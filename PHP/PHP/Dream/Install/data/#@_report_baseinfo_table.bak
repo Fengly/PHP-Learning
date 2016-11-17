@@ -1,0 +1,8 @@
+﻿DROP TABLE IF EXISTS `#@_report_baseinfo_table`;
+CREATE TABLE `#@_report_baseinfo_table` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `rid` int(11) NOT NULL DEFAULT '0',
+  `notes` text NOT NULL,
+  `comment` text NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;

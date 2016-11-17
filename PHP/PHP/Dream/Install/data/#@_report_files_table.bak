@@ -1,0 +1,9 @@
+DROP TABLE IF EXISTS `#@_report_files_table`;
+CREATE TABLE `#@_report_files_table` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL DEFAULT '0',
+  `rid` int(11) NOT NULL DEFAULT '0',
+  `path` char(100) NOT NULL DEFAULT '',
+  `addtime` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;

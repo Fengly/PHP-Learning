@@ -1,0 +1,111 @@
+<script language="javascript">
+$(function(){
+	$("#submitProgress{$uniqid}").linkbutton({
+		iconCls:'icon-save'
+	});
+	
+	$("#uploadProgress{$uniqid}").linkbutton({
+		iconCls:'icon-save'
+	});
+	
+	$("#resetProgress{$uniqid}").linkbutton({
+		iconCls:'icon-cancel'
+	});
+});
+function onSubmitProgress(idd){
+	$.messager.progress();
+	$("#addFormProgress"+idd).form('submit',{
+		url:'__URL__/Progress/act/add/go/1',
+		onSubmit: function(){
+			var isValid = $(this).form('validate');
+			if (!isValid){
+				$.messager.progress('close');
+			}
+			return isValid;
+		},
+		success:function(data){
+			$.messager.progress('close');
+			if(data==1){
+				$.messager.alert('提示','新增数据成功！','info',function(){
+					var sa = '{$TC.config.SUBMIT_ACTION}';
+					$("#ProjectProgress").panel('refresh');
+					if(sa==1){
+						cancel['Projectadd'].dialog('close');
+						cancel['Projectadd'] = null;
+					}
+				});
+			}else if(data==0){
+				$.messager.alert('提示','新增数据失败！','warning');
+			}else{
+				//alert(data);
+				$.messager.alert('提示','您没有新增权限！','warning',function(){
+					var sa = '{$TC.config.SUBMIT_ACTION}';
+					if(sa==1){
+						cancel['Projectadd'].dialog('close');
+						cancel['Projectadd'] = null;
+					}
+				});
+			}
+		}
+	});
+}
+
+function onUploadProgress(idd){
+	$.messager.progress();
+	var ids = $("#ids"+idd).val();
+	$("#addFormProgress"+idd).form('submit',{
+		url:'__URL__/Progress/act/edit/go/1/id/'+ids,
+		onSubmit: function(){
+			var isValid = $(this).form('validate');
+			if (!isValid){
+				$.messager.progress('close');
+			}
+			return isValid;
+		},
+		success:function(data){
+			$.messager.progress('close');
+			if(data==1){
+				$.messager.alert('提示','更新数据成功！','info',function(){
+					var sa = '{$TC.config.SUBMIT_ACTION}';
+					$("#ProjectProgress").panel('refresh');
+					if(sa==1){
+						cancel['Projectadd'].dialog('close');
+						cancel['Projectadd'] = null;
+					}
+				});
+			}else if(data==0){
+				$.messager.alert('提示','更新数据失败！','warning');
+			}else{
+				//alert(data);
+				$.messager.alert('提示','您没有更新权限','warning',function(){
+					var sa = '{$TC.config.SUBMIT_ACTION}';
+					if(sa==1){
+						cancel['Projectadd'].dialog('close');
+						cancel['Projectadd'] = null;
+					}
+				});
+			}
+		}
+	});
+}
+
+function onResetProgress(idd){
+	cancel['Projectadd'].dialog('close');
+	cancel['Projectadd'] = null;
+}
+</script>
+<div class="con-tb">
+<form id="addFormProgress{$uniqid}" method="post">
+ <table width="100%" class="infobox linebox reportbox" border="0" cellspacing="0" cellpadding="0" style="border-collapse: collapse;">
+      <tr>
+        <td width="10%" class="rebg"><label>内容</label><input id="ids{$uniqid}" type="hidden" value="{$id}" /><input name="pro_id" id="pro_id{$uniqid}" type="hidden" value="{$pid}" /><input name="type" id="type{$uniqid}" type="hidden" value="{$type}" /><input name="status" id="status{$uniqid}" type="hidden" value="{$tid}" /></td>
+        <td><textarea name="description" id="description{$uniqid}"  rows="18" class="easyui-kindeditor" style="width:99%; height:283px" data-options="uploadJson:'__APP__/Public/Upload/save/act/ProjectProgress'">{$info.description}</textarea></td>
+      </tr>
+     <tr>
+        <td height="38" colspan="2" align="center">
+        <if condition="$act=='add'"><a href="javascript:void(0);" onclick="javascript:onSubmitProgress('{$uniqid}')" id="submitProgress{$uniqid}">保存</a><else /><a href="javascript:void(0);" onclick="javascript:return onUploadProgress('{$uniqid}')" id="uploadProgress{$uniqid}">保存</a></if> &nbsp; <a href="javascript:void(0);" onclick="javascript:onResetProgress('{$uniqid}')" id="resetProgress{$uniqid}">关闭</a>
+        </td>
+     </tr>   
+  </table>
+</form>
+</div>

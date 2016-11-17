@@ -1,0 +1,127 @@
+<script language="javascript">
+//$(".linebox tr:odd").addClass('even');
+$(function(){
+	$("#co{$uniqid}").linkbutton({
+		iconCls:'icon-cancel'
+	});
+	
+	$("#ma{$uniqid}").linkbutton({
+		iconCls:'icon-email'
+	});
+	
+	$("#ex{$uniqid}").linkbutton({
+		iconCls:'icon-ok'
+	});
+	
+	$("#unex{$uniqid}").linkbutton({
+		iconCls:'icon-ok'
+	});
+});
+
+function onCloseBusiness(idd){
+	cancel['BusinessDetail'].dialog('close');
+	cancel['BusinessDetail'].dialog('destroy');
+	cancel['BusinessDetail'] = null;
+}
+
+function onMailBusiness(idd){
+	var ids = $("#ids"+idd).val();
+	var len = $(".selectMail").length;
+	if(!len){
+		$("<div/>").dialog({
+			title:'邮件提醒',
+			resizable:true,
+			width:610,
+			height:432,
+			href:'__APP__/Public/Mail/index/mode/4/id/'+ids,
+			onClose:function(){
+				$(this).dialog('destroy');
+			}
+		});
+	}
+}
+
+function onCheckBusiness(idd){
+	var ids = $("#ids"+idd).val();
+	$.get('__URL__/ck&act/0/id/'+ids,function(data){
+		if(data==1){
+			cancel['BusinessDetail'].dialog('refresh');
+			$.messager.alert('提示','日志审核成功！','info',function(){
+				$("#Business").datagrid('reload');
+			});
+		}else if(data==0){
+			$.messager.alert('提示','日志审核失败！','warning');
+		}else{
+			$.messager.alert('提示','您没有审核权限','warning');
+		}
+	});
+}
+
+function onUncheckBusiness(idd){
+	var ids = $("#ids"+idd).val();
+	$.get('__URL__/ck/act/1/id/'+ids,function(data){
+		if(data==1){
+			cancel['BusinessDetail'].dialog('refresh');
+			$.messager.alert('提示','日志反审核成功！','info',function(){
+				$("#Business").datagrid('reload');
+			});
+		}else if(data==0){
+			$.messager.alert('提示','日志反审核失败！','warning');
+		}else{
+			$.messager.alert('提示','您没有反审核权限','warning');
+		}
+	});
+}
+</script>
+<div class="con-tb">
+<form id="addFormBusiness{$uniqid}" method="post"> 
+<table class="infobox linebox" width="100%" border="0" cellspacing="0" cellpadding="0" >
+  <tr>
+    <td class="rebg"><label for="user_id">出差人员</label></td>
+    <td colspan="3">{$str_user}</td>
+    </tr>
+    
+    <tr>
+    <td class="rebg" width="12%"><label for="customer">目标客户</label><input id="ids{$uniqid}" type="hidden" value="{$id}" /></td>
+    <td width="32%">{$info.customer}</td>
+    <td class="rebg" width="12%"><label for="daily_date">出差时间</label></td>
+    <td>{$info.daily_date}</td>
+    </tr>
+  <tr>
+    <td class="rebg"><label for="projects">对应项目</label></td>
+    <td colspan="3">{$info.project}</td>
+    </tr>
+  <tr>
+    <td class="rebg"><label for="purpose">出差目的</label></td>
+    <td colspan="3">{$info.purpose}</td>
+    </tr>
+  <tr>
+    <td class="rebg"><label for="status">出差状态</label></td>
+    <td colspan="3"><?php echo $arr_status[$info['status']] ?></td>
+    </tr>
+  
+  <?php
+   if($info['status']<2){
+   	$dis = 'style="display:none"';
+   }else{
+    $ids = '';
+   }
+  ?>
+  <tbody {$dis} id="overdaily{$uniqid}">
+  <tr>
+    <td class="rebg"><label for="day_count">出差天数</label></td>
+    <td colspan="3">{$info.day_count}</td>
+    </tr>
+  <tr>
+    <td class="rebg"><label for="result">出差总结</label></td>
+    <td colspan="3">{$info.result}</td>
+    </tr> 
+  </tbody>
+  
+  <tr>
+    <td height="38" colspan="4" align="center"><if condition="in_array('p',$role) || $role=='all'"><if condition="$info['status']==2"><a href="#" onclick="javascript:onCheckBusiness('{$uniqid}')" id="ex{$uniqid}">审核</a><elseif condition="$info['status']==3" /><a href="#" onclick="javascript:onUncheckBusiness('{$uniqid}')" id="unex{$uniqid}">取消审核</a></if> &nbsp; </if><a href="#" onclick="javascript:onMailBusiness('{$uniqid}')" id="ma{$uniqid}">邮件提醒</a> &nbsp; <a href="#" onclick="javascript:onCloseBusiness('{$uniqid}')" id="co{$uniqid}">关闭</a></td>
+    </tr>
+ </table>
+</form>
+</div>
+<div id="addOpts"></div>

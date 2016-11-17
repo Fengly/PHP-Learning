@@ -1,0 +1,7 @@
+DROP TABLE IF EXISTS `#@_bug_fulltext_table`;
+CREATE TABLE `#@_bug_fulltext_table` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `bug_id` int(11) NOT NULL DEFAULT '0',
+  `content_index` text NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;

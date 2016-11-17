@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/admin/admin.php" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/admin/admin_ok.php" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/admin/index.php" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/dl_ok.php" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/dljm.php" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/fbzt.php" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/fbzt_ok.php" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/index.php" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/lmzy.php" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/script/zc_check.js" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/script/zhuce_check.js" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/zc_ok.php" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/zhuce.php" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/zthf.php" charset="GBK" />
+  </component>
+</project>

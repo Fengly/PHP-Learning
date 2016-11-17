@@ -1,0 +1,37 @@
+<script language="javascript">
+$(function(){
+	var ch = $("body").height();
+	
+	$("#ProjectDetail").panel({
+		border:0,
+		href:'__URL__/detail_info/id/{$id}'
+	});
+	
+	$("#BugDetail").panel({
+		border:0,
+		height:ch-239,
+		href:'__URL__/bug_info/id/{$id}'
+	});
+	
+	$("#rightTabs").tabs({
+		onClose:function(t,i){
+			$.ajaxSetup({  
+				async : false  
+			});
+			if(t==atit){
+				$.get('__GROUP__/Report/clear', function(data){});
+				$.get('__GROUP__/Log/clear', function(data){});
+			}
+			$.ajaxSetup({  
+				async : true  
+			});
+		}
+	});
+	
+	$("#rightTabs").tabs('select',atit);
+});
+</script>
+<div id="ProjectDetailCon" class="con">
+	<div id="ProjectDetail"></div>
+    <div id="BugDetail" style="overflow-y:scroll; margin-top:4px;"></div>
+</div>

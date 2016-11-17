@@ -1,0 +1,179 @@
+<script language="javascript">
+var ch;
+$(function(){
+	ch = $("body").height();
+});
+
+function toProgressAdd(idd,type){
+	//alert(type);
+	var pids = $("#pids"+idd).val();
+	$("#addModify"+idd).dialog({
+		title:'新增跟进',
+		resizable:true,
+		width:850,
+		height:372,
+		href:'__URL__/Progress/act/add/pid/'+pids+'/type/'+type,
+		onOpen:function(){
+			cancel['Projectadd'] = $(this);
+		},
+		onClose:function(){
+			//alert(tit);
+			//$("#ProjectProgress").panel('refresh');
+			cancel['Projectadd'] = null;
+		}
+	});
+}
+
+function toProgressRe(idd,ids){
+	var pids = $("#pids"+idd).val();
+	$("#addModify"+idd).dialog({
+		title:'反馈跟进',
+		resizable:true,
+		width:850,
+		height:372,
+		href:'__URL__/Progress/act/add/pid/'+pids+'/tid/'+ids,
+		onOpen:function(){
+			cancel['Projectadd'] = $(this);
+		},
+		onClose:function(){
+			//$("#ProjectProgress").panel('refresh');
+			cancel['Projectadd'] = null;
+		}
+	});
+}
+
+function toProgressUp(idd,ids){
+	var pids = $("#pids"+idd).val();
+	$("#addModify"+idd).dialog({
+		title:'编辑跟进',
+		resizable:true,
+		width:850,
+		height:372,
+		href:'__URL__/Progress/act/edit/pid/'+pids+'/id/'+ids,
+		onOpen:function(){
+			cancel['Projectadd'] = $(this);
+		},
+		onClose:function(){
+			//$("#ProjectProgress").panel('refresh');
+			cancel['Projectadd'] = null;
+		}
+	});
+}
+
+function toProgressMail(idd,ids){
+	var len = $(".selectProjectDetail").length;
+	var pids = $("#pids"+idd).val();
+	if(len==0){
+		$("<div/>").dialog({
+			title:'跟进提醒',
+			resizable:true,
+			width:610,
+			height:432,
+			href:'__APP__/Public/Mail/index/mode/2/pid/'+pids+'/id/'+ids,
+			onOpen:function(){
+				cancel['ProjectDetail'] = $(this);
+			},
+			onClose:function(){
+				$(this).dialog('destroy');
+				cancel['ProjectDetail'] = null;
+			}
+		});
+	}
+}
+
+function toProgressDel(idd,ids){
+	$.messager.confirm('提示','确定删除吗！',function(r){
+		if(r==true){
+			$.messager.progress();
+			$.get('__URL__/delprog/id/'+ids, function(data){
+				$.messager.progress('close');
+				if(data==1){
+					$.messager.alert('提示','删除跟进成功！','info',function(){
+						$("#ProjectProgress").panel('refresh');
+					});
+				}else if(data==0){
+					$.messager.alert('提示','删除跟进失败！','warning');
+				}else{
+					$.messager.alert('提示','您没有删除权限','warning');
+				}
+			});
+		}
+	});
+}
+</script>
+ <input type="hidden" id="pids{$uniqid}" value="{$pid}" />
+ <?php
+  if($phinfo){
+ ?>
+  <table width="100%" class="infobox table-border" border="0" cellspacing="0" cellpadding="0">
+  <?php
+    $tc = count($phinfo)*3;
+    foreach($phinfo as $k=>$t){
+    $uid = $t['user_id'];
+    if($k%2==0){
+        $even = 'class="rebg"';
+    }else{
+        $even = 'class="rebg4"';
+    }
+  ?>
+  <tr {$even}>
+   <if condition="$k==0">
+    <td width="3%" rowspan="{$tc}" align="center" valign="middle" style="line-height:16px; padding-top:3px; padding-bottom:3px">
+    <label>
+      跟<br/>
+      进
+    </label></td>
+   </if>
+    <td width="11%" height="30">{$t.username}</td>
+    <td width="24%">{$t.addtime}</td>
+    <td width="62%" height="30" align="right">&nbsp;<a href="javascript:void(0);" id="re" class="easyui-linkbutton" onclick="toProgressAdd('{$uniqid}','{$type}')" data-options="iconCls:'icon-add',plain:true">新增</a><if condition="$userid==$t['user_id'] || in_array('a',$role) || $role=='all'"><span class="datagrid-btn-separator-nofloat"></span><a href="javascript:void(0);" id="re" onclick="toProgressUp('{$uniqid}','{$t.id}')" class="easyui-linkbutton" data-options="iconCls:'icon-edit',plain:true">修改</a><span class="datagrid-btn-separator-nofloat"></span><a href="javascript:void(0);" id="re" onclick="toProgressDel('{$uniqid}','{$t.id}')" class="easyui-linkbutton" data-options="iconCls:'icon-cancel',plain:true">删除</a><span class="datagrid-btn-separator-nofloat"></span><a href="javascript:void(0);" id="re" class="easyui-linkbutton" onclick="toProgressMail('{$uniqid}','{$t.id}')" data-options="iconCls:'icon-email',plain:true">跟进提醒</a></if><span class="datagrid-btn-separator-nofloat"></span><a href="javascript:void(0);" id="re" class="easyui-linkbutton" onclick="toProgressRe('{$uniqid}','{$t.id}')" data-options="iconCls:'icon-reset',plain:true">反馈</a></td>
+  </tr>
+    <tr>
+     <td height="19" colspan="3">{$t.description}</td>
+    </tr>
+    <?php
+     if($t['comment']){
+    ?>
+    <tr>
+     <td height="19" colspan="3" style="padding:3px">
+     <table width="100%" class="infobox table-border" border="0" cellspacing="0" cellpadding="0">
+   <?php
+     foreach($t['comment'] as $s){
+   ?>
+    <tr class="rebg2">
+     <td width="15%">{$s.username}</td>
+     <td width="29%">{$s.addtime}</td>
+     <td width="62%" align="right">&nbsp;<if condition="$userid==$s['user_id'] || in_array('a',$role) || $role=='all'"><a href="javascript:void(0);" id="re" onclick="toProgressUp('{$uniqid}','{$s.id}')" class="easyui-linkbutton" data-options="iconCls:'icon-edit',plain:true">修改</a><span class="datagrid-btn-separator-nofloat"></span><a href="javascript:void(0);" id="re" onclick="toProgressDel('{$uniqid}','{$s.id}')" class="easyui-linkbutton" data-options="iconCls:'icon-cancel',plain:true">删除</a></if></td>
+    </tr>
+    <tr>
+     <td height="19" colspan="3">{$s.description}</td>
+    </tr>
+   <?php
+     }
+    ?>
+     </table>
+     </td>
+    </tr>
+   <?php
+     }
+    }
+   ?>
+  </table>
+ <?php 
+  }else{
+ ?>
+  <?php
+   if(in_array('gr',$role) || in_array('fr',$role) || $role=='all' || in_array('a',$role)){
+  ?>
+  <table width="100%" class="infobox table-border" border="0" cellspacing="0" cellpadding="0">
+  <tr class="rebg">
+    <td height="30" style="line-height:16px;"><a href="javascript:void(0);" id="re" onclick="toProgressAdd('{$uniqid}','{$type}_type')" class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:true">新增</a></td>
+    </tr>
+  </table>
+  <?php
+   }
+  ?>
+ <?php
+  }
+ ?>
+<div id="addModify{$uniqid}"></div>

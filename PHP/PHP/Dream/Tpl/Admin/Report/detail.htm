@@ -1,0 +1,142 @@
+<script language="javascript">
+function addSonReport(idd,isempty){
+	$.messager.progress();
+	if(!isempty){
+		var ids = $("#mbReport").contents().find("#ids"+idd).val();
+		$("#mbReport").contents().find("#replyFormReport"+idd).form('submit',{
+			url:'__URL__/reply/id/'+ids,
+			onSubmit: function(){
+				var isValid = $(this).form('validate');
+				if (!isValid){
+					$.messager.progress('close');
+				}
+				return isValid;
+			},
+			success:function(data){
+				$.messager.progress('close');
+				if(data==1){
+					$.messager.alert('提示','发表反馈成功！','info',function(){
+						window.frames["mbReport"].location.reload();
+					});
+				}else if(data==0){
+					$.messager.alert('提示','发表反馈失败！','warning');
+				}else{
+					//alert(data);
+					$.messager.alert('提示','您没有反馈权限！','warning');
+				}
+			}
+		});
+	}else{
+		$.messager.progress('close');
+		$.messager.alert('提示','编辑框不能为空！','warning');
+		return false;
+	}
+}
+
+function addSonUpload(idd){
+	$.messager.progress();
+	var ids = $("#mbReport").contents().find("#ids"+idd).val();
+	$("#mbReport").contents().find("#uploadFormReport"+idd).form('submit',{
+		url:'__URL__/upfile/id/'+ids,
+		onSubmit: function(){
+			var isValid = $(this).form('validate');
+			if (!isValid){
+				$.messager.progress('close');
+			}
+			return isValid;
+		},
+		success:function(data){
+			$.messager.progress('close');
+			if(data==1){
+				$.messager.alert('提示','上传附件成功！','info',function(){
+					window.frames["mbReport"].location.reload();
+				});
+			}else if(data==0){
+				$.messager.alert('提示','上传附件失败！','warning');
+			}else if(data<0){
+				$.messager.alert('提示','您没有上传权限！','warning');
+			}else{
+				$.messager.alert('提示',data,'warning');
+			}
+		}
+	});
+}
+
+function delSonReport(id){
+	$.messager.confirm('提示','确定删除吗？',function(r){
+		if(r){
+			$.post('__URL__/delreply', {val:id} ,function(data){
+				if(data==1){
+					$.messager.alert('提示','删除反馈成功！','info',function(){
+						window.frames["mbReport"].location.reload();
+					});
+				}else if(data==0){
+					$.messager.alert('提示','删除反馈失败！','warning');
+				}else if(data==2){
+					$.messager.alert('提示','只能删除自己的反馈！','warning');
+				}else{
+					$.messager.alert('提示','您没有删除权限！','warning');
+				}
+			});
+		}
+	});
+}
+
+function delSonUpload(id,uid,path){
+	$.messager.confirm('提示','确定删除吗？',function(r){
+		if(r){
+			$.post('__URL__/delfile', {id:id,uid:uid,path:path} ,function(data){
+				if(data==1){
+					$.messager.alert('提示','删除附件成功！','info',function(){
+						window.frames["mbReport"].location.reload();
+					});
+				}else if(data==0){
+					$.messager.alert('提示','删除附件失败！','warning');
+				}else if(data==2){
+					$.messager.alert('提示','您不能删除此附件！','warning');
+				}else{
+					$.messager.alert('提示','您没有删除权限！','warning');
+				}
+			});
+		}
+	});
+}
+
+function setSonUser(uid,olduser,id){
+	if(uid){
+		$.post('__URL__/setuser', {id:id,uid:uid,olduser:olduser} ,function(data){
+			if(data==1){
+				$.messager.alert('提示','重新指派成功！','info',function(){
+					window.frames["mbReport"].location.reload();
+				});
+			}else if(data==0){
+				$.messager.alert('提示','重新指派失败！','warning');
+			}else{
+				alert(data);
+				$.messager.alert('提示','您没有重新指派权限！','warning');
+			}
+		});
+	}else{
+		$.messager.alert('提示','您没有选择用户！','warning');
+	}
+}
+
+function setSonStatus(status,oldstatus,id){
+	if(status){
+		$.post('__URL__/setstatus', {id:id,val:status,oldstatus:oldstatus} ,function(data){
+			if(data==1){
+				$.messager.alert('提示','更改状态成功！','info',function(){
+					window.frames["mbReport"].location.reload();
+				});
+			}else if(data==0){
+				$.messager.alert('提示','更改状态失败！','warning');
+			}else{
+				$.messager.alert('提示','您没有更改权限！','warning');
+			}
+		});
+	}else{
+		$.messager.alert('提示','您没有选择状态！','warning');
+	}
+}
+</script>
+<iframe src='__URL__/reportdetail/id/{$id}' name='mbReport' frameborder='0' id='mbReport' width='100%' height="100%"></iframe>

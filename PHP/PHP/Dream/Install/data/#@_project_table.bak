@@ -1,0 +1,12 @@
+﻿DROP TABLE IF EXISTS `#@_project_table`;
+CREATE TABLE `#@_project_table` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(80) NOT NULL DEFAULT '',
+  `client_id` smallint(6) NOT NULL DEFAULT '0',
+  `status` smallint(4) NOT NULL DEFAULT '0',
+  `itemtype` smallint(4) NOT NULL DEFAULT '0',
+  `view_state` smallint(4) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `idx_project_name` (`name`),
+  KEY `idx_project_sele` (`view_state`,`status`,`itemtype`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='项目列表';

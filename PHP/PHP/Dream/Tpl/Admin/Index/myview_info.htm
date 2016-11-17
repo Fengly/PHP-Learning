@@ -1,0 +1,160 @@
+<script language="javascript">
+$(function(){
+	cw = $("#ViewCon").width();
+	ch = $("body").height();
+	$("#seleView").val('{$days}');
+	$(".view-close").click(function(){
+		var n = $(this).parent().parent().parent().next('tbody');
+		n.stop(true,true).toggle();
+		$(this).toggleClass("view-open");
+	});
+	
+	$("#seleView").combobox({
+		editable:false,
+		onSelect:function(n){
+			$.post('__URL__/change/', {val:n.value}, function(data){
+				$("#newpro").panel('refresh');
+			});
+		}
+	});
+});
+
+function toReload(){
+	$.get('__URL__/clear/view', function(data){
+		$("#seleView").val(7);
+		$("#newpro").panel('refresh');
+	});
+}
+
+var atit;
+function toPro(idd,idn,type){
+	var n = '项目';
+	var u = 'Project';
+	tit = n+'-'+idn;
+	var ishas = $("#rightTabs").tabs('exists',atit);
+	if(!ishas){
+		//alert('__GROUP__/'+u+'/detail/id/'+idd);
+		$("#rightTabs").tabs('add',{
+			id : -2,
+			title : n+'-'+idn,
+			href : '__GROUP__/'+u+'/detail/id/'+idd,
+			closable : true,
+		});
+		atit = '项目-'+idn;
+	}else{
+		if(idd!=otit){
+			var tab = $("#rightTabs").tabs('getTab',atit);
+			$("#rightTabs").tabs('update',{
+				tab:tab,
+				options:{
+					title : n+'-'+idn,
+					href : '__GROUP__/'+u+'/detail/id/'+idd,
+					closable : true,
+				} 
+			});
+			atit = tit;
+			$("#rightTabs").tabs('select',atit);
+		}else{
+			$("#rightTabs").tabs('select',atit);
+		}
+	}
+}
+</script>
+<table class="con3 infobox table-border" width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr class="rebg">
+        <td height="30">
+         <a href="javascript:void(0);" id="re" class="easyui-linkbutton" onclick="toReload()" data-options="iconCls:'icon-reload',plain:true">重载</a>
+         <span class="datagrid-btn-separator-nofloat" style="margin-right:0px"></span>
+         <select id="seleView">
+           <option value="7">最近7天</option>
+           <option value="30">最近30天</option>
+           <option value="60">最近2个月</option>
+           <option value="90">最近3个月</option>
+           <option value="180">最近半年</option>
+           <option value="365">最近一年</option>
+         </select>
+      </td>
+   </tr>
+  <tr>
+   <td style="padding:3px;">
+    <if condition="$ainfo">
+    <?php
+     foreach($ainfo as $key=>$info){
+    ?>
+    <if condition="$info[0]['proname']">
+    <table width="100%" class="infobox table-border" border="0" cellspacing="0" cellpadding="0">
+      <thead>
+       <tr class="tit_bg myview">
+        <td colspan="3" valign="middle">
+          <span class="myview_r view-close"></span><span class="myview_l"><a href="javascript:toPro('{$info.0.pro_id}','{$info.0.proname}','{$info.0.type}');" class="up-font-tit" style="">项目-{$info.0.proname}</a></span>
+        </td>
+       </tr>
+      </thead>
+      <tbody>
+      <?php
+        $tc = count($info)*3;
+        foreach($info as $k=>$t){
+        //dump($t);
+        $uid = $t['user_id'];
+      ?>
+      
+      <?php
+      if($t){
+      ?>
+      <tr class="rebg" style="height:22px; line-height:22px;">
+        <td width="21%">
+         <label>
+         <?php echo $tabs[$t['type']]; ?>
+        </label>
+        </td>
+        <td width="33%">{$t.username}</td>
+        <td width="46%">{$t.addtime}</td>
+      </tr>
+        <tr>
+         <td height="19" colspan="3">{$t.description}</td>
+        </tr>
+        <?php
+         if($t['comment']){
+        ?>
+        <tr>
+         <td height="19" colspan="3" style="padding:3px">
+         <table width="100%" class="infobox table-border" border="0" cellspacing="0" cellpadding="0">
+       <?php
+         foreach($t['comment'] as $s){
+       ?>
+        <tr class="rebg2" style="height:22px; line-height:22px;">
+         <td width="21%">{$s.username}</td>
+         <td width="33%">{$s.addtime}</td>
+         <td width="46%" align="right">&nbsp;</td>
+        </tr>
+        <tr>
+         <td height="19" colspan="3">{$s.description}</td>
+        </tr>
+       <?php
+         }
+        ?>
+          </table> 
+         </td>
+        </tr>
+       <?php
+         }
+        }
+       }
+       ?>
+     </tbody>
+    </table>
+    </if>
+    <?php
+     }
+    ?>
+    <else />
+    <table class="infobox table-border" width="100%" border="0" cellspacing="0" cellpadding="0">
+	  <tr class="tit_bg">
+	    <td width="3%" colspan="3" valign="middle" class="up-font-over"><label>最近{$days}天内没有新的跟进信息！</label></td>
+	  </tr>
+	</table>
+	</if>
+  </td>
+ </tr>
+</table>
+ 

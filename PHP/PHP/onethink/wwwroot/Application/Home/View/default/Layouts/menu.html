@@ -1,0 +1,54 @@
+<block name="menu">
+    <div data-options="region:'west',split:true" title="导航菜单" style="width:200px;">
+        <div class="easyui-accordion" data-options="fit:true,border:false">
+            <div title="员工中心"    style="padding:10px;">
+                <div title="人员管理" class="easyui-panel"  style="border:none; padding:5px">
+                    <ul class="easyui-tree" checkbox="false"  data-options="url:'{:__ESUI__}/menu.json',method:'get',lines:true,"iconCls="">
+
+                    </ul>
+                </div>
+            </div>
+            <div title="用户中心"    style="padding:10px;"></div>
+            <div title="订单中心"    style="padding:10px;"></div>
+            <div title="商品中心"    style="padding:10px;"></div>
+            <div title="系统中心"    style="padding:10px;"></div>
+
+        </div>
+    </div>
+</block>
+<script>
+    function adminIndex(){
+        removeTab();
+        addTab('控制台',"{:U('index/huanying')}");
+    }
+    function userList(){
+        removeTab();
+        addTab('用户管理',"{:U('userList')}");
+    }
+    function userAddr(){
+        removeTab();
+        addTab('用户地址',"{:U('userAddr')}");
+    }
+    function addTab(title, url){
+        if ($('#haha').tabs('exists', title)){
+            $('#haha').tabs('select', title);
+        } else {
+            var content = '<iframe scrolling="auto" frameborder="0"  src="'+url+'" style="width:100%;height:100%;"></iframe>';
+            $('#haha').tabs('add',{
+                title:title,
+                content:content,
+                closable:true
+            });
+        }
+    }
+    function removeTab(){
+        var tab = $('#haha').tabs('getSelected');
+        if(tab){
+            var index = $('#haha').tabs('getTabIndex',tab);
+            $('#haha').tabs('close',index);
+        }
+    }
+
+
+
+</script>
